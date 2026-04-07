@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Branch</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- write a code -->
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Branches</h4>
+                                    <div class="buttons">
+                                        <a href="javascript:void(0)" class="settingPanelToggle btn btn-primary subbtn">Add
+                                            Branch</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="table-1" style="width:100%;">
+                                            <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Branch Name</th>
+                                                <th>Username</th>
+                                                <th>Email</th>
+                                                <th>Phone Number</th>
+                                                <th>Status</th>
+                                                <th>Subscription</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% if (branch.length > 0) { %>
+                                                <% for (let i = 0; i < branch.length; i++) { %>
+                                                    <tr>
+                                                        <td><%= i+1 %></td>
+                                                        <td><%= branch[i].branch_name %></td>
+                                                        <td><%= branch[i].userName %></td>
+                                                        <td><%= branch[i].userEmail %></td>
+                                                        <td><%= branch[i].userMobile %></td>
+                                                        <td>
+                                                            <% if(branch[i].is_active == true){ %>
+                                                                <div class="badge badge-success badge-shadow">Active
+                                                                </div>
+                                                            <% }else { %>
+                                                                <div class="badge badge-danger badge-shadow">Deactive</div>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <a href="/company/renew-subscription?branch_id=<%= branch[i]._id %>"
+                                                               class="btn btn-success">
+                                                                Renew
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               class="settingPanelToggle updatebtn btn btn-primary"
+                                                               onclick="updateBranch('<%= branch[i]._id %>')">
+                                                                <i class="fas fa-edit"></i></a>
+                                                        </td>
+
+                                                    </tr>
+                                                <% } %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="8" class="text-center">No branches found.</td>
+                                                </tr>
+                                            <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="settingSidebar settingSidebar2 sub">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Branch</div>
+
+                    <div class="card m-2 scrollbar-auto">
+                        <div class="card-header">
+                            <h4>Select Subscriptions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-2">
+                                    <thead>
+                                    <tr>
+                                        <th>Plan Name</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% if (subscriptions.length > 0) { %>
+                                        <% for (let i = 0; i < subscriptions.length; i++) { %>
+                                            <tr>
+                                                <td><%= subscriptions[i].plan_name %></td>
+                                                <td><%= subscriptions[i].description %></td>
+                                                <td>
+                                                    <div class="badge badge-success badge-shadow"><%= subscriptions[i].price %></div>
+                                                </td>
+                                                <td><a href="javascript:void(0)"
+                                                       onclick="updateData('<%= subscriptions[i]._id %>')"
+                                                       class="addbtn subbtn btn btn-primary">Select</a></td>
+                                            </tr>
+                                        <% } %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4" class="text-center">No subscription plans found.</td>
+                                        </tr>
+                                    <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settingSidebar settingSidebar2 add">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Branch</div>
+                    <div class="card m-4 scrollbar-auto">
+                        <form class="needs-validation" id="pay-form" novalidate="">
+                            <div class="card-header">
+                                <h4>Add Branch</h4>
+                            </div>
+                            <div class="card-body">
+                                <input type="hidden" id="subscriptions_id" name="subscriptions_id">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Branch Name</label>
+                                        <input type="text" class="form-control" name="branch_name"
+                                               placeholder="Branch Name" required="">
+                                        <div class="invalid-feedback">What's Branch Name?</div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Username</label>
+                                        <input type="text" class="form-control" name="name"
+                                               placeholder="Username" required="">
+                                        <div class="invalid-feedback">What's Username?</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Email Address</label>
+                                        <input type="email" class="form-control" name="email_id"
+                                               placeholder="Email Address" required="">
+                                        <div class="invalid-feedback">What's Email?</div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Mobile Number</label>
+                                        <input type="text" class="form-control" name="mobile_no"
+                                               placeholder="Mobile Number" required="" pattern="[0-9]{10}" maxlength="10">
+                                        <div class="invalid-feedback">Valid 10-digit mobile?</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="text" class="form-control" name="password"
+                                           placeholder="Branch Password" required="">
+                                    <div class="invalid-feedback">What's Branch Password?</div>
+                                </div>
+
+                                <hr>
+                                <h6 class="mb-3">Location Details</h6>
+
+                                <div class="form-group">
+                                    <label>Branch Address</label>
+                                    <input type="text" class="form-control" name="street_address"
+                                           placeholder="Branch Address" required="">
+                                    <div class="invalid-feedback">What's Branch Address?</div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="city_id">City</label>
+                                        <input type="text" class="form-control" name="city_id" id="city_id"
+                                               placeholder="City" required="">
+                                        <div class="invalid-feedback">What's Branch City?</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>State</label>
+                                        <input type="text" class="form-control" name="state_id" id="state_id"
+                                               placeholder="State" required="">
+                                        <div class="invalid-feedback">What's Branch State?</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Country</label>
+                                        <input type="text" class="form-control" name="country_id" id="country_id"
+                                               placeholder="Country" required="">
+                                        <div class="invalid-feedback">What's Branch Country?</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-8">
+                                        <label>Branch GST No</label>
+                                        <input type="text" class="form-control" name="gst_no"
+                                               placeholder="Branch GST No" required="">
+                                        <div class="invalid-feedback">What's Branch GST No?</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Pincode</label>
+                                        <input type="text" class="form-control" name="pin_code"
+                                               placeholder="Branch Pincode" required=""
+                                               onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+                                               pattern="[0-9]{6}" maxlength="6">
+                                        <div class="invalid-feedback">Valid 6-digit pincode?</div>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <input type="submit" class="btn btn-primary" name="add" id="add"
+                                       value="Add Branch">
+
+                                <a href="javascript:void(0)"
+                                   class="addbtn btn btn-icon icon-left btn-primary btn-restore-theme">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settingSidebar settingSidebar2 update">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Branch</div>
+                    <div class="card m-4 scrollbar-auto">
+                        <form class="needs-validation" id="update-branch-form" novalidate="">
+                            <div class="card-header">
+                                <h4>Update Branch</h4>
+                            </div>
+                            <div class="card-body">
+                                <input type="hidden" id="update_branch_id" name="branch_id">
+                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Branch Name</label>
+                                        <input type="text" class="form-control" id="branch_name" name="branch_name"
+                                               placeholder="Branch Name" required="">
+                                        <div class="invalid-feedback">What's Branch Name?</div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Username</label>
+                                        <input type="text" class="form-control" id="update_userName" name="name"
+                                               placeholder="Username" required="">
+                                        <div class="invalid-feedback">What's Username?</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Email Address</label>
+                                        <input type="email" class="form-control" id="update_userEmail" name="email_id"
+                                               placeholder="Email Address" required="">
+                                        <div class="invalid-feedback">What's Email?</div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Mobile Number</label>
+                                        <input type="text" class="form-control" id="update_userMobile" name="mobile_no"
+                                               placeholder="Mobile Number" required="" pattern="[0-9]{10}" maxlength="10">
+                                        <div class="invalid-feedback">Valid 10-digit mobile?</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>New Password (Leave blank to keep current)</label>
+                                    <input type="password" class="form-control" name="password" placeholder="New Password">
+                                </div>
+
+                                <hr>
+                                <h6 class="mb-3">Location Details</h6>
+
+                                <div class="form-group">
+                                    <label>Branch Address</label>
+                                    <input type="text" class="form-control" id="street_address" name="street_address"
+                                           placeholder="Branch Address" required="">
+                                    <div class="invalid-feedback">
+                                        What's Branch Address?
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="city_id1">City</label>
+                                        <input type="text" class="form-control" name="city_id" id="city_id1"
+                                               placeholder="City" required="">
+                                        <div class="invalid-feedback">What's Branch City?</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>State</label>
+                                        <input type="text" class="form-control" name="state_id" id="state_id1"
+                                               placeholder="State" required="">
+                                        <div class="invalid-feedback">What's Branch State?</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Country</label>
+                                        <input type="text" class="form-control" name="country_id" id="country_id1"
+                                               placeholder="Country" required="">
+                                        <div class="invalid-feedback">What's Branch Country?</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-8">
+                                        <label>Branch GST No</label>
+                                        <input type="text" class="form-control" name="gst_no" id="gst_no"
+                                               placeholder="Branch GST No" required="">
+                                        <div class="invalid-feedback">What's Branch GST No?</div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Pincode</label>
+                                        <input type="text" class="form-control" name="pin_code" id="pin_code"
+                                               placeholder="Branch Pincode" required=""
+                                               onkeypress="return (event.charCode > 47 && event.charCode < 58)"
+                                               minlength="6" maxlength="6">
+                                        <div class="invalid-feedback">What's Branch Pincode?</div>
+                                    </div>
+                                </div>
+
+                                <input type="submit" class="btn btn-primary" name="update" id="update"
+                                       value="Update Branch">
+
+                                <a href="javascript:void(0)"
+                                   class="updatebtn btn btn-icon icon-left btn-primary btn-restore-theme">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateData(id) {
+        document.getElementById('subscriptions_id').value = id;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#pay-form').submit(function (e) {
+            e.preventDefault();
+            
+            if (this.checkValidity() === false) {
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                return;
+            }
+
+            var formData = $(this).serialize();
+
+            console.log(formData)
+            $.ajax({
+                url: "/company/add-branch",
+                type: "POST",
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        var options = {
+                            key: res.key_id,
+                            amount: res.amount,
+                            currency: "INR",
+                            name: "Digirestro",
+                            description: res.description,
+                            image: "https://dummyimage.com/600x400/000/fff",
+                            order_id: res.order_id,
+                            handler: function (response) {
+                                $.ajax({
+                                    url: "/company/insert-branch-data",
+                                    type: "POST",
+                                    data: formData,
+                                    success: function (response) {
+                                        if (response.success) {
+                                            window.location.href = "/company/manage-branch";
+                                        } else {
+                                            iziToast.error({
+                                                title: 'Error',
+                                                message: response.msg || 'Error processing payment data!',
+                                                position: 'topRight'
+                                            });
+                                        }
+                                    },
+                                    error: function (error) {
+                                        iziToast.error({
+                                            title: 'Error',
+                                            message: 'Error processing payment data!',
+                                            position: 'topRight'
+                                        });
+                                    }
+                                });
+
+                            },
+                            prefill: {
+                                contact: res.contact,
+                                name: res.name,
+                                email: res.email
+                            },
+                            notes: {
+                                description: res.description
+                            },
+                            theme: {
+                                color: "#f38709"
+                            }
+                        };
+                        var razorpayObject = new Razorpay(options);
+                        razorpayObject.on('payment.failed', function (response) {
+                            iziToast.error({
+                                title: 'Payment Failed',
+                                message: response.error.description,
+                                position: 'topRight'
+                            });
+                        });
+                        razorpayObject.open();
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: res.msg,
+                            position: 'topRight'
+                        });
+                    }
+                },
+                error: function (error) {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Error processing payment request!',
+                        position: 'topRight'
+                    });
+                }
+            });
+        });
+
+        $('#update-branch-form').submit(function (e) {
+            e.preventDefault();
+            
+            if (this.checkValidity() === false) {
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                return;
+            }
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: "/company/update-branch",
+                type: "POST",
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        window.location.reload();
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: res.msg || 'Update failed!',
+                            position: 'topRight'
+                        });
+                    }
+                },
+                error: function (error) {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Error processing update!',
+                        position: 'topRight'
+                    });
+                }
+            });
+        });
+    });
+
+    function updateBranch(id) {
+        console.log(id);
+        document.getElementById('update_branch_id').value = id;
+        // Make an API call to fetch JSON data
+        fetch(`/company/fetch-branch/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Populate the form fields with the fetched data
+                document.getElementById('branch_name').value = data.branch_name;
+                document.getElementById('update_userName').value = data.userName;
+                document.getElementById('update_userEmail').value = data.userEmail;
+                document.getElementById('update_userMobile').value = data.userMobile;
+                
+                document.getElementById('street_address').value = data.street_address;
+                document.getElementById('city_id1').value = data.city;
+                document.getElementById('state_id1').value = data.state;
+                document.getElementById('country_id1').value = data.country;
+                document.getElementById('gst_no').value = data.gst_no;
+                document.getElementById('pin_code').value = data.pin_code;
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+</script>
+<!-- General JS Scripts -->
+<script src="assets/js/app.min.js"></script>
+<!-- JS Libraies -->
+<script src="assets/bundles/datatables/datatables.min.js"></script>
+<script src="assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<script src="assets/bundles/chocolat/dist/js/jquery.chocolat.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<!-- Page Specific JS File -->
+<script src="assets/js/page/datatables.js"></script>
+<!-- Template JS File -->
+<script src="assets/js/scripts.js"></script>
+<!-- Custom JS File -->
+<script src="assets/js/custom.js"></script>
+
+</body>
+</html>

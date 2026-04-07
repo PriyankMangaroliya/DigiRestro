@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Company</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+
+        <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Food Category</h4>
+                                    <div class="buttons">
+                                        <a href="javascript:void(0)" class="settingPanelToggle btn btn-primary addbtn">Add
+                                            Category</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover " id="table-1" style="width:100%;">
+                                            <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Category Name</th>
+                                                <th>Total Sub Category</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% if (foodCategory.length > 0) { %>
+                                                <% for (let i = 0; i < foodCategory.length; i++) { %>
+                                                    <tr>
+                                                        <td><%= i + 1 %></td>
+                                                        <td><%= foodCategory[i].category_name %></td>
+                                                        <td><%= foodCategory[i].count %></td>
+                                                        <td>
+                                                            <% if(foodCategory[i].is_active == true){ %>
+                                                                <a href="/company/category-activeAndDeactive?id=<%= foodCategory[i]._id %>&value=true"
+                                                                   class="badge badge-success badge-shadow">Active</a>
+                                                            <% }else { %>
+                                                                <a href="/company/category-activeAndDeactive?id=<%= foodCategory[i]._id %>&value=false"
+                                                                   class="badge badge-danger badge-shadow">Deactive</a>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               class="settingPanelToggle updatebtn btn btn-primary"
+                                                               onclick="updateData('<%= foodCategory[i]._id %>', '<%= foodCategory[i].category_name %>')">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a href="#" class="btn btn-danger"
+                                                               data-category-id="<%= foodCategory[i]._id %>"
+                                                               onclick="Aredelete(this)"><i class="fas fa-trash"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                <% } %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="5" class="text-center">No categories found.</td>
+                                                </tr>
+                                            <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="settingSidebar settingSidebar1 add">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Category</div>
+                    <div class="card m-4">
+                        <form class="needs-validation" action="/company/add-category" method="post" novalidate="">
+                            <div class="card-header">
+                                <h4>Add Category</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Category Name</label>
+                                    <input type="text" class="form-control" name="category_name"
+                                           placeholder="Category Name" required="">
+                                    <div class="invalid-feedback">
+                                        What's Category Name?
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <input type="submit" class="btn btn-primary" id="add"
+                                       value="Add Category">
+
+                                <a href="javascript:void(0)"
+                                   class="addbtn btn btn-icon icon-left btn-primary btn-restore-theme">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="settingSidebar settingSidebar1 update">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Category</div>
+                    <div class="card m-4">
+                        <form class="needs-validation" action="/company/update-category" method="post" novalidate="">
+                            <div class="card-header">
+                                <h4>Update Category</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Category Name</label>
+                                    <input type="text" class="form-control" name="category_name"
+                                           placeholder="Category Name" required="" id="category_name">
+                                    <div class="invalid-feedback">
+                                        What's Category Name?
+                                    </div>
+                                    <input type="hidden" class="form-control" name="category_id" id="category_id">
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <input type="submit" class="btn btn-primary" id="update"
+                                       value="Update Category">
+
+                                <a href="javascript:void(0)"
+                                   class="updatebtn btn btn-icon icon-left btn-primary btn-restore-theme">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateData(id, categoryName) {
+        document.getElementById('category_name').value = categoryName;
+        document.getElementById('category_id').value = id;
+    }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function Aredelete(element) {
+        const categoryId = element.getAttribute('data-category-id');
+
+        // console.log(categoryId)
+        // console.log("/company/delete-category?id=" + categoryId)
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/company/delete-category?id=" + categoryId,
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = "/company/manage-category";
+                        } else {
+                            iziToast.error({
+                                title: 'Error',
+                                message: response.message || 'Failed to delete the record.',
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Failed to delete the record.',
+                            position: 'topRight'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<!-- General JS Scripts -->
+<script src="assets/js/app.min.js"></script>
+<!-- JS Libraies -->
+<script src="assets/bundles/datatables/datatables.min.js"></script>
+<script src="assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<!-- Page Specific JS File -->
+<script src="assets/js/page/datatables.js"></script>
+<!-- Template JS File -->
+<script src="assets/js/scripts.js"></script>
+<!-- Custom JS File -->
+<script src="assets/js/custom.js"></script>
+
+</body>
+</html>

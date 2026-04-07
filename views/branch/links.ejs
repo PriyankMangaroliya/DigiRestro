@@ -1,0 +1,69 @@
+<!-- Required Library Bundle Script -->
+<script src="assets/js/core/libs.min.js"></script>
+
+<!-- External Library Bundle Script -->
+<script src="assets/js/core/external.min.js"></script>
+
+<!-- iziToast -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
+<!-- Widgetchart JavaScript -->
+<script src="assets/js/charts/widgetcharts.js"></script>
+
+<!-- Mapchart JavaScript -->
+<script src="assets/js/charts/vectore-chart.js"></script>
+<script src="assets/js/charts/dashboard.js"></script>
+
+<!-- Admin Dashboard Chart -->
+<script src="assets/js/charts/admin.js"></script>
+
+<!-- fslightbox JavaScript -->
+<script src="assets/js/fslightbox.js"></script>
+
+<!-- GSAP Animation -->
+<script src="assets/vendor/gsap/gsap.min.js"></script>
+<script src="assets/vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="assets/js/animation/gsap-init.js"></script>
+
+<!-- Stepper Plugin -->
+<script src="assets/js/stepper.js"></script>
+
+<!-- Form Wizard Script -->
+<script src="assets/js/form-wizard.js"></script>
+
+<!-- app JavaScript -->
+<script src="assets/js/app.js"></script>
+
+<!-- moment JavaScript -->
+<script src="assets/vendor/moment.min.js"></script>
+
+
+<!-- Branch Sidebar Toggle -->
+<script>
+    (function () {
+        // Create backdrop element once
+        var backdrop = document.createElement('div');
+        backdrop.className = 'sidebar-backdrop';
+        document.body.appendChild(backdrop);
+
+        function openSidebar() { document.body.classList.add('sidebar-open'); }
+        function closeSidebar() { document.body.classList.remove('sidebar-open'); }
+
+        // Wire up toggle button(s)
+        document.querySelectorAll('.branch-sidebar-toggle').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                document.body.classList.contains('sidebar-open') ? closeSidebar() : openSidebar();
+            });
+        });
+
+        // Close when backdrop is clicked
+        backdrop.addEventListener('click', closeSidebar);
+
+        // Close on resize beyond mobile breakpoint
+        window.addEventListener('resize', function () {
+            if (window.innerWidth >= 992) closeSidebar();
+        });
+    })();
+</script>

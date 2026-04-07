@@ -1,0 +1,223 @@
+/* =============================================
+   DigiRestro Branch — Responsive Styles
+   ============================================= */
+
+/* ---- Hamburger Toggle Button (mobile only) ---- */
+.branch-sidebar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    margin-right: 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+.branch-sidebar-toggle:hover {
+    background: rgba(234, 106, 18, 0.1);
+}
+.branch-sidebar-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #ea6a12;
+    margin: 5px 0;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* ---- Sidebar Mobile Overlay Backdrop ---- */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1040;
+    transition: opacity 0.3s;
+}
+body.sidebar-open .sidebar-backdrop {
+    display: block;
+}
+
+/* ---- Table Box Responsive (assign-table) ---- */
+.table-box-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.table-box-wrap .box {
+    flex: 0 0 auto;
+}
+
+/* ---- Legend Status Row ---- */
+.table-legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+.table-legend-row p {
+    margin: 0 !important;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+/* ---- Utility: full-width on XS ---- */
+@media (max-width: 767.98px) {
+    /* Force form-group margins */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+}
+
+/* =============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================= */
+
+@media (max-width: 991.98px) {
+
+    /* Show hamburger */
+    .branch-sidebar-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* ---- Sidebar: hidden off-screen by default ---- */
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px !important;
+        min-width: 250px !important;
+        transform: translateX(-260px);
+        transition: transform 0.3s ease;
+        z-index: 1050 !important;
+        overflow-y: auto;
+    }
+
+    /* Sidebar visible when body has .sidebar-open */
+    body.sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+
+    /* Main content takes full width */
+    .main-content {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Nav: ensure items arrange nicely */
+    .iq-navbar .container-fluid {
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    /* Nav brand */
+    .iq-navbar h3 {
+        font-size: 1.1rem;
+        white-space: nowrap;
+    }
+
+    /* "New Order" nav button — keep but compact */
+    .iq-navbar .btn-primary.rounded-pill {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    /* ---- Dashboard stat cards: go single column ---- */
+    .col-lg-7, .col-xl-8,
+    .col-lg-5, .col-xl-4 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* ---- master-order: 4 panel columns → single col ---- */
+    .col-lg-2,
+    .col-lg-3,
+    .col-lg-5 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Fix order table width override */
+    .table-responsive.border.border-danger {
+        width: 100% !important;
+    }
+
+    /* ---- master-area / master-table: form below list ---- */
+    .col-xl-9, .col-xl-3,
+    .col-lg-8, .col-lg-4 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* ---- manage-order: 2 col → single col ---- */
+    .col-lg-6 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* ---- assign-table: box sizing ---- */
+    .box {
+        width: 100px !important;
+        height: 100px !important;
+        font-size: 0.85rem;
+    }
+
+    /* ---- Nav "New Order" button: smaller ---- */
+    .iq-navbar .btn-primary.rounded-pill {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+
+    /* ---- Content inner: compact horizontal padding on small screens ---- */
+    .content-inner {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    /* Very small: "New Order" link hidden; sidebar toggle shows it */
+    .nav-new-order-wrap {
+        display: none;
+    }
+
+    .iq-navbar h3 {
+        font-size: 1rem;
+    }
+
+    /* Table boxes smaller */
+    .box {
+        width: 86px !important;
+        height: 86px !important;
+    }
+
+    /* Legend chips: smaller text */
+    .table-legend-row p {
+        font-size: 0.72rem;
+        padding: 3px 8px;
+    }
+
+    /* Profile form-group label */
+    .form-group label {
+        font-size: 0.85rem;
+    }
+}

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Branch - KOT View</title>
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+        <div class="row">
+            <div class="col">
+                <div class="card bg-transparent">
+                    <div class="card-header d-flex align-items-center justify-content-between p-0 m-0 border-bottom-0">
+                        <div class="header-title">
+                            <h4 class="card-title">KOT View</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4">
+
+            <% if(kotData.length > 0){ %>
+                <% for (let i = 0; i < kotData.length; i++) { %>
+                    <div class="col">
+                        <div class="card order-history-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div>
+                                        <h6 class="heading-title mb-2">Bill No : <%= kotData[i].bill_no %></h6>
+                                        <h6 class="heading-title mb-2">Table No
+                                            : <%= kotData[i].table_id.table_name %></h6>
+                                        <h6 class="heading-title mb-2">KOT No : <%= i + 1 %></h6>
+                                        <p class="mb-0"><%= kotData[i].created_at.toDateString() %>
+                                            , <%= kotData[i].created_at.toLocaleTimeString() %></p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="heading-title fw-bolder text-primary">Items</h6>
+                                    <h6 class="heading-title fw-bolder text-primary">Qty</h6>
+                                </div>
+                                <div>
+                                    <% kotData[i].item.forEach(item => { %>
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="heading-title fw-bolder"><%= `${item.food_sub_item_id.item_name} (${item.food_sub_item_id.sub_item_name})` %></h6>
+                                            <h6 class="heading-title fw-bolder"><%= item.quantity %></h6>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center" id="action-02">
+                                        <button class="btn btn-icon btn-outline-success rounded ctc-button"
+                                                data-action="click"
+                                                data-order-Id="<%= kotData[i]._id %>"
+                                                data-items="<%= JSON.stringify(kotData[i].item.map(item => item._id)) %>">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.667969 4.09434L3.93567 7.33366L10.668 0.666992"
+                                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Food Is Ready</span>
+                                </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="col-12 text-center py-5">
+                    <h5 class="text-muted">No orders available in KOT.</h5>
+                </div>
+            <% } %>
+
+        </div>
+
+    </div>
+</main>
+<script>
+    document.querySelectorAll('.ctc-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const orderId = this.dataset.orderId;
+            const items = this.dataset.items;
+
+            $.ajax({
+                url: "/updateItemStatus",
+                type: "POST",
+                contentType: 'application/json',
+                data: JSON.stringify({orderId: orderId, items: items}),
+                success: function (res) {
+                    if (res.success) {
+                        window.location.href = "/branch/view-kot";
+                    } else {
+                        iziToast.error({
+                            title: 'Error',
+                            message: res.msg || 'Failed to update order status.',
+                            position: 'topRight'
+                        });
+                    }
+                },
+                error: function() {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'An error occurred while updating status.',
+                        position: 'topRight'
+                    });
+                }
+            });
+        });
+    });
+</script>
+<%- include("links.ejs") %>
+
+</body>
+</html>

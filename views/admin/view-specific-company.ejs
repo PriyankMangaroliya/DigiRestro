@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Admin</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <%- include("nav-sidebar.ejs") %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- write a code -->
+
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Specific Company</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="table-1" style="width:100%;">
+                                            <thead>
+                                            <tr>
+                                                <th>Index</th>
+                                                <!-- <th>Company Logo</th> -->
+                                                <th>Company Name</th>
+                                                <th>Legal Name</th>
+                                            
+                                                <th>Created At</th>
+                                                <th>Updated At</th>
+                                                <th>Deleted At</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% for(let i = 0; i < companyDetails.length; i++){ %>
+                                                    <tr>
+                                                        <td><%= i + 1 %></td>
+                                                        <!-- <td><%= companyDetails[i]._id %></td> -->
+                                                        <!-- <td>
+                                                            <img alt="image" src="assets/img/cards/mastercard.png"
+                                                                 width="50">
+                                                        </td> -->
+                                                        <td><%= companyDetails[i].company_name %></td>
+                                                        <td><%= companyDetails[i].legal_name %></td>
+    
+                                                        
+                                                        <td>
+                                                            <%= companyDetails[i].created_at.toLocaleString('en-US', {
+                                                                weekday: 'short',
+                                                                day: 'numeric',
+                                                                month: 'short',
+                                                                year: 'numeric'
+                                                            }) %>
+                                                            <br>
+                                                            <%= companyDetails[i].created_at.toLocaleString('en-US', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                                second: '2-digit'
+                                                            }) %>
+    
+                                                        </td>
+                                                        <td>
+                                                            <%= companyDetails[i].updated_at.toLocaleString('en-US', {
+                                                                weekday: 'short',
+                                                                day: 'numeric',
+                                                                month: 'short',
+                                                                year: 'numeric'
+                                                            }) %>
+                                                            <br>
+                                                            <%= companyDetails[i].updated_at.toLocaleString('en-US', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                                second: '2-digit'
+                                                            }) %>
+                                                        </td>
+                                                        <td><%= companyDetails[i].deleted_at %></td>
+                                                        <td>
+                                                            <a href="/admin/view-specific-branch?id=<%= companyDetails[i]._id %>" class="btn btn-primary"><i
+                                                                        class="fas fa-info-circle"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                <% } %>
+
+<!--                                            <tr>-->
+<!--                                                <td>1</td>-->
+<!--                                                <td>Pruthil</td>-->
+<!--                                                <td>Italiya</td>-->
+<!--                                                <td>pruthil@gmail.com</td>-->
+<!--                                                <td>8327423656</td>-->
+<!--                                                <td>-->
+<!--                                                    <a href="assets/img/users/user-8.png">-->
+<!--                                                        <img alt="image" src="assets/img/users/user-8.png"
+width="50">-->
+<!--                                                    </a>-->
+<!--                                                </td>-->
+<!--                                                <td>2</td>-->
+<!--                                                <td>-->
+<!--                                                    <a href="view-company.php" class="btn btn-primary"><i-->
+<!--                                                                class="fas fa-info-circle"></i></a>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+</div>
+<script src="../admin/assets/js/page/datatables.js"></script>
+
+</body>
+</html>

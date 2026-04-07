@@ -1,0 +1,162 @@
+<html lang="">
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: none;
+            width: 100% !important;
+            height: 100%;
+            line-height: 1.6;
+        }
+
+        table td {
+            vertical-align: top;
+        }
+
+        body {
+            background-color: #f6f6f6;
+        }
+
+        .body-wrap {
+            background-color: #f6f6f6;
+            width: 100%;
+        }
+
+        .container {
+            display: block !important;
+            max-width: 600px !important;
+            margin: 0 auto !important;
+            /* makes it centered */
+            clear: both !important;
+        }
+
+        .content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: block;
+            padding: 20px;
+        }
+
+        .content-wrap {
+            padding: 5px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 500;
+        }
+
+        .alignright {
+            text-align: right;
+        }
+
+        .alignleft {
+            text-align: left;
+        }
+
+        .invoice {
+            margin: 40px auto;
+            text-align: left;
+            width: 80%;
+        }
+
+        .invoice td {
+            padding: 5px 0;
+        }
+
+        .invoice .invoice-items {
+            width: 100%;
+        }
+
+        .invoice .invoice-items td {
+            border-top: #eee 1px solid;
+        }
+
+        .border-top td {
+            border-top: 2px solid #333;
+        }
+
+        .border-bottom td {
+            border-bottom: 2px solid #333;
+        }
+
+        .totals {
+            border-top: 2px solid #333;
+            border-bottom: 2px solid #333;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<table class="body-wrap">
+    <tbody>
+    <tr>
+        <td class="container content-wrap" width="450">
+            <div class="content">
+                <table class="invoice">
+                    <tbody>
+                    <tr>
+                        <td colspan="4"><h1 align="center">DigiRestro</h1></td>
+                    </tr>
+                    <tr class="border-top">
+                        <td colspan="4">Name :- Priyank Mangaroliya</td>
+                    </tr>
+                    <% order.forEach(function(item) { %>
+                        <tr>
+                            <td colspan="4">Bill No :- <%= item.bill_no %></td>
+                        </tr>
+
+                        <tr>
+                            <td>Table :- <%= item.table_id.table_name %></td>
+                        </tr>
+                        <tr class="border-bottom">
+                            <td colspan="4">Date :- <%= item.created_at.toDateString() %></td>
+                        </tr>
+                        <tr class="border-bottom totals">
+                            <td class="alignleft">Item</td>
+                            <td class="alignright" width="15%">Qty</td>
+                            <td class="alignright" width="20%">Price</td>
+                            <td class="alignright" width="25%">Total Price</td>
+                        </tr>
+                        <% item.item.forEach(function(subItem) { %>
+                            <tr>
+                                <td class="alignleft"><%=`${subItem.food_sub_item_id.item_name} (${subItem.food_sub_item_id.sub_item_name})`%></td>
+                                <td class="alignright"><%=  subItem.quantity  %></td>
+                                <td class="alignright">₹ <%=  subItem.price  %></td>
+                                <td class="alignright">₹ <%=  subItem.quantity * subItem.price  %></td>
+                            </tr>
+                            <%  });  %>
+                            <%  });  %>
+                    </tbody>
+                    <tfoot>
+                    <tr class="totals border-bottom border-top">
+                        <td colspan="3">Total</td>
+                        <td class="alignright">
+                            ₹ <%=  order.reduce((total, item) => total + item.total_price, 0)  %></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    window.print();
+</script>
+</body>
+</html>

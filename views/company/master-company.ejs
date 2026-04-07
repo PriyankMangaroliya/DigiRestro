@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Company</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+
+        <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Company</h4>
+                                    <div class="buttons">
+                                        <a href="javascript:void(0)" class="settingPanelToggle btn btn-primary addbtn">Add
+                                            Company</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="table-1" style="width:100%;">
+                                            <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Company Name</th>
+                                                <th>Company Legal Name</th>
+                                                <th>Company Logo</th>
+                                                <th>Total Branches</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% if (companies.length > 0) { %>
+                                                <% for (let i = 0; i < companies.length; i++) { %>
+                                                    <tr>
+                                                        <td><%= i + 1 %></td>
+                                                        <td><%= companies[i].company_name %></td>
+                                                        <td><%= companies[i].legal_name %></td>
+                                                        <td>
+                                                            <img src="<%= companies[i].company_logo %>" width="50px"
+                                                                 alt="no view Img">
+                                                        </td>
+
+                                                        <td><%= companies[i].totalBranch %></td>
+                                                        <td>
+                                                            <div class="badge badge-success badge-shadow">Active</div>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               class="settingPanelToggle updatebtn btn btn-primary"
+                                                               onclick="updateData('<%= companies[i]._id %>', '<%= companies[i].company_name %>' , '<%= companies[i].legal_name %>')">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a href="#" data-subscription-id="<%= companies[i]._id %>"
+                                                               onclick="Aredelete(this)"
+                                                               class="btn btn-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                <% } %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No companies found.</td>
+                                                </tr>
+                                            <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="settingSidebar settingSidebar1 add">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Company</div>
+                    <div class="card m-4">
+                        <form class="needs-validation" novalidate="" action="/company/add-company" method="post"
+                              enctype="multipart/form-data">
+                            <div class="card-header">
+                                <h4>Add Company</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Company Name</label>
+                                    <input type="text" class="form-control" name="company_name"
+                                           placeholder="Company Name" required="">
+                                    <div class="invalid-feedback">
+                                        What's Company Name?
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Legal Name</label>
+                                    <input type="text" class="form-control" name="legal_name"
+                                           placeholder="Company Legal Name" required="">
+                                    <div class="invalid-feedback">
+                                        What's Company Legal Name?
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Logo</label>
+                                    <input type="file" class="form-control" name="company_logo" accept=".jpg"
+                                           required="">
+                                    <div class="invalid-feedback">
+                                        Add Company Logo?
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <input type="submit" class="btn btn-primary" id="add"
+                                       value="Add Company">
+
+                                <a href="javascript:void(0)"
+                                   class="addbtn btn btn-icon icon-left btn-primary btn-restore-theme">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settingSidebar settingSidebar1 update">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Company</div>
+                    <div class="card m-4">
+                        <form class="needs-validation" novalidate="" method="post" action="/company/update-company" enctype="multipart/form-data">
+                            <div class="card-header">
+                                <h4>Update Company</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Company Name</label>
+                                    <input type="text" class="form-control" name="company_name" id="company_name"
+                                           placeholder="Company Name" required="">
+                                    <div class="invalid-feedback">
+                                        What's Company Name?
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Legal Name</label>
+                                    <input type="text" class="form-control" name="legal_name" id="legal_name"
+                                           placeholder="Company Legal Name" required="">
+                                    <div class="invalid-feedback">
+                                        What's Company Legal Name?
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Logo</label>
+                                    <input type="file" class="form-control" name="company_logo" accept=".jpg">
+                                    <small class="form-text text-muted">Leave empty to keep current logo.</small>
+                                </div>
+                                <input type="hidden" class="form-control" name="company_id" id="company_id">
+                            </div>
+                            <div class="card-footer">
+                                <input type="submit" class="btn btn-primary" name="update" id="update"
+                                       value="Update Company">
+
+                                <a href="javascript:void(0)"
+                                   class="updatebtn btn btn-icon icon-left btn-primary btn-restore-theme">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    function updateData(id, company_name, legal_name) {
+        document.getElementById('company_name').value = company_name;
+        document.getElementById('legal_name').value = legal_name;
+        document.getElementById('company_id').value = id;
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    function Aredelete(element) {
+        const companyId = element.getAttribute('data-subscription-id');
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/company/delete-company?id=" + companyId,
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = "/company/manage-company";
+                        } else {
+                            iziToast.error({
+                                title: 'Error',
+                                message: response.message || 'Failed to delete the record.',
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Failed to delete the record.',
+                            position: 'topRight'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+
+<!-- General JS Scripts -->
+<script src="assets/js/app.min.js"></script>
+<!-- JS Libraies -->
+<script src="assets/bundles/datatables/datatables.min.js"></script>
+<script src="assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<!-- Page Specific JS File -->
+<script src="assets/js/page/datatables.js"></script>
+<!-- Template JS File -->
+<script src="assets/js/scripts.js"></script>
+<!-- Custom JS File -->
+<script src="assets/js/custom.js"></script>
+
+</body>
+</html>

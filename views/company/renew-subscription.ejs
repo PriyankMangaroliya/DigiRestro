@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Branch</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- write a code -->
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+
+                        <% for (let i = 0; i < subscriptions.length; i++) { %>
+                            <div class="col-12 col-md-4 col-lg-4">
+                                <div class="pricing">
+                                    <div class="pricing-padding">
+                                        <div class="pricing-price">
+                                            <div><%= subscriptions[i].price %></div>
+                                            <div><%= subscriptions[i].plan_name %></div>
+                                        </div>
+                                        <div class="pricing-details"><%= subscriptions[i].description %>
+                                        </div>
+                                        <div class="pricing-cta">
+                                            <a class="btn btn-outline-primary" data-subscription-id="<%= subscriptions[i]._id %>"
+                                               data-branch-id="<%= branch_id %>"
+                                               onclick="renew(this)">
+                                                <span style="color: #0D0A0A">Select & Pay</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </section>
+
+
+        </div>
+
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function renew(element) {
+        const subscriptionId = element.getAttribute('data-subscription-id');
+        const branch_id = element.getAttribute('data-branch-id');
+
+        $.ajax({
+            type: "POST",
+            url: `/company/renewBranch?subscriptionId=${subscriptionId}&branch_id=${branch_id}`,
+            success: function (res) {
+                if (res.success) {
+                    const options = {
+                        key: res.key_id,
+                        amount: res.amount,
+                        currency: "INR",
+                        name: "Digirestro",
+                        description: res.description,
+                        image: "https://dummyimage.com/600x400/000/fff",
+                        order_id: res.order_id,
+                        handler: function (response) {
+                            const requestData = {
+                                subscriptionId: subscriptionId,
+                                branch_id: branch_id
+                            };
+                            $.ajax({
+                                url: "/company/renew-handlePaymentSuccess",
+                                type: "POST",
+                                data: requestData,
+                                success: function (response) {
+                                    if (response.success) {
+                                        window.location.href = "/company/manage-branch";
+                                    } else {
+                                        iziToast.error({
+                                            title: 'Error',
+                                            message: response.msg || 'Error processing payment data!',
+                                            position: 'topRight'
+                                        });
+                                    }
+                                },
+                                error: function (error) {
+                                    iziToast.error({
+                                        title: 'Error',
+                                        message: 'Error processing payment data!',
+                                        position: 'topRight'
+                                    });
+                                }
+                            });
+                        },
+                        prefill: {
+                            contact: res.contact,
+                            name: res.name,
+                            email: res.email
+                        },
+                        notes: {
+                            description: res.description
+                        },
+                        theme: {
+                            color: "#f38709"
+                        }
+                    };
+
+                    const razorpayObject = new Razorpay(options);
+                    razorpayObject.on('payment.failed', function (response) {
+                        iziToast.error({
+                            title: 'Payment Failed',
+                            message: response.error.description || 'Payment Failed',
+                            position: 'topRight'
+                        });
+                    });
+                    razorpayObject.open();
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: res.msg || 'Something went wrong!',
+                        position: 'topRight'
+                    });
+                }
+            },
+            error: function (error) {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Error processing payment request!',
+                    position: 'topRight'
+                });
+            }
+        });
+    }
+
+</script>
+<!-- General JS Scripts -->
+<script src="assets/js/app.min.js"></script>
+<!-- JS Libraies -->
+<script src="assets/bundles/datatables/datatables.min.js"></script>
+<script src="assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<script src="assets/bundles/chocolat/dist/js/jquery.chocolat.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<!-- Page Specific JS File -->
+<script src="assets/js/page/datatables.js"></script>
+<!-- Template JS File -->
+<script src="assets/js/scripts.js"></script>
+<!-- Custom JS File -->
+<script src="assets/js/custom.js"></script>
+
+</body>
+</html>

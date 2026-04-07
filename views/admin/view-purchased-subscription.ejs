@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin - Purchased Subscriptions</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper main-wrapper-1">
+            <%- include("nav-sidebar.ejs") %>
+
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- write a code -->
+
+                    <section class="section">
+                        <div class="section-body">
+
+                            <% var message; if (message) { %>
+                                <p>
+                                    <%= message %>
+                                </p>
+                                <% } %>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div
+                                                    class="card-header d-flex justify-content-between align-items-center">
+                                                    <h4>Purchased Subscription Plan</h4>
+                                                    <!-- <div class="buttons">
+                                        <a href="/admin/add-subscription" class="btn btn-primary btn-lg">Add
+                                            Subscription</a>
+                                    </div> -->
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped" id="table-1">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Branch Name</th>
+                                                                    <th>Plane Name</th>
+                                                                    <th>Duration(Month)</th>
+                                                                    <th>Price(<i class="fas fa-rupee-sign"></i>)</th>
+                                                                    <th>Start Date</th>
+                                                                    <th>End Date</th>
+                                                                    <th>Status</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <% for (let i=0; i < purchasedPlanData.length; i++) { %>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <%= i + 1 %>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= purchasedPlanData[i].branch_name %>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= purchasedPlanData[i].plan_name %>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= purchasedPlanData[i].duration %> months
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= purchasedPlanData[i].price %>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= purchasedPlanData[i].start_date.toLocaleString('en-US',
+                                                                                { weekday: 'short' , day: 'numeric' ,
+                                                                                month: 'short' , year: 'numeric' }) %>
+                                                                                <br>
+                                                                                <%= purchasedPlanData[i].start_date.toLocaleString('en-US',
+                                                                                    { hour: '2-digit' ,
+                                                                                    minute: '2-digit' ,
+                                                                                    second: '2-digit' }) %>
+
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= purchasedPlanData[i].end_date.toLocaleString('en-US',
+                                                                                { weekday: 'short' , day: 'numeric' ,
+                                                                                month: 'short' , year: 'numeric' }) %>
+                                                                                <br>
+                                                                                <%= purchasedPlanData[i].end_date.toLocaleString('en-US',
+                                                                                    { hour: '2-digit' ,
+                                                                                    minute: '2-digit' ,
+                                                                                    second: '2-digit' }) %>
+
+                                                                        </td>
+                                                                        <td>
+                                                                            <% if(purchasedPlanData[i].is_active==true){
+                                                                                %>
+                                                                                <div
+                                                                                    class="badge badge-success badge-shadow">
+                                                                                    Active</div>
+                                                                                <% }else { %>
+                                                                                    <div
+                                                                                        class="badge badge-danger badge-shadow">
+                                                                                        Deactive</div>
+                                                                                    <% } %>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <% } %>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                        </div>
+                    </section>
+
+                </div>
+
+        </div>
+    </div>
+
+    <script src="../admin/assets/js/page/datatables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
+
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+// For sidebar layout
+components.css --- 3420
+
+//Category, Sub Category
+.settingSidebar1 {
+    width: 400px;
+    right: -400px;
+}
+
+//Branch, Food
+.settingSidebar2 {
+    width: 600px;
+    right: -600px;
+}
+
+
+// setting sidebar Add and Update (--JS--)
+script.js --- 600
+
+
+ $(".addbtn").on("click", function () {
+        $(".add").toggleClass("showSettingPanel");
+    }),
+        $(".page-wrapper").on("click", function () {
+            $(".add").removeClass("showSettingPanel");
+        });
+
+    $(".updatebtn").on("click", function () {
+        $(".update").toggleClass("showSettingPanel");
+    }),
+        $(".page-wrapper").on("click", function () {
+            $(".update").removeClass("showSettingPanel");
+        });

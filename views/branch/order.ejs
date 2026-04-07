@@ -1,0 +1,355 @@
+<script>
+    const publicVariables = {};
+</script>
+
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Branch - Food Order</title>
+    <!-- Library / Plugin Css Build -->
+    <link rel="stylesheet" href="assets/css/core/libs.min.css">
+    <!-- Custom Css -->
+    <link rel="stylesheet" href="assets/css/aprycot.mine209.css?v=1.0.0">
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+        <div class="row d-flex align-items-center justify-content-center ">
+            <div class="col-lg-7">
+                <div class="card table-responsive border border-danger" style="width: 104%;">
+                    <form id="orderForm">
+                        <table class="table table-borderless product-table rounded">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th><span class="heading-title rowpad text-white">Items</span></th>
+                                <th><span class="heading-title rowpad text-white">Price</span></th>
+                                <th><span class="heading-title rowpad text-white">Quantity</span></th>
+                                <th><span class="heading-title rowpad text-white">Total</span></th>
+                                <th><span class="heading-title rowpad text-white">Action</span></th>
+                            </tr>
+                            </thead>
+                            <tbody id="orderTableBody" style="font-size: 16px;" class="fw-bolder">
+                            <tbody id="orderTableBody" style="font-size: 16px;" class="fw-bolder">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="6" class="border-bottom text-black bg-soft-dark"
+                                    style="padding-bottom: 0px;">
+                                    <div class="form-group row ms-2">
+                                        <div class="col form-check d-block">
+                                            <input class="form-check-input border-danger" type="radio"
+                                                   name="flexRadioDefault"
+                                                   id="flexRadioDefault1" value="1" checked>
+                                            <label class="form-check-label">Cash</label>
+                                        </div>
+                                        <div class="col form-check d-block">
+                                            <input class="form-check-input border-danger" type="radio"
+                                                   name="flexRadioDefault"
+                                                   id="flexRadioDefault1" value="2">
+                                            <label class="form-check-label">Cards</label>
+                                        </div>
+                                        <div class="col form-check d-block">
+                                            <input class="form-check-input border-danger" type="radio"
+                                                   name="flexRadioDefault"
+                                                   id="flexRadioDefault1" value="3">
+                                            <label class="form-check-label">Online</label>
+                                        </div>
+                                        <div class="col form-check d-block ">
+                                            <input class="form-check-input border-danger" type="radio"
+                                                   name="flexRadioDefault"
+                                                   id="flexRadioDefault1" value="4">
+                                            <label class="form-check-label">Others</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <button type="button" onclick="submitForm(3)"
+                                            class="btn btn-sm mb-1 btn-primary">Print
+                                    </button>
+                                    <button type="button" onclick="submitForm(4)"
+                                            class="btn btn-sm mb-1 btn-primary">Completed
+                                    </button>
+                                </td>
+                                <td colspan="3" style="font-size: 16px;" class="fw-bolder"><span
+                                            id="totalAmount">₹ 0.00</span></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script>
+    function submitForm(buttonValue) {
+        const orderTableBody = document.getElementById('orderTableBody');
+        const formData = [];
+        const itemData = [];
+        let totalPrice = 0;
+
+        for (let i = 0; i < orderTableBody.rows.length; i++) {
+            const row = orderTableBody.rows[i];
+            if (row.classList.contains('timing-row')) {
+                continue;
+            }
+            const itemName = row.cells[0].textContent.trim();
+            const priceText = row.cells[1] ? row.cells[1].textContent.trim() : '';
+            const price = parseFloat(priceText.replace('₹', ''));
+            const quantityText = row.cells[2] ? row.cells[2].textContent.trim() : '';
+            const quantity = parseInt(quantityText, 10);
+
+            if (isNaN(quantity)) {
+                console.error('Quantity is not a number:', quantityText);
+                continue; // Skip this row if quantity is not a valid number
+            }
+
+            const total = price * quantity;
+            totalPrice += total; // Calculate total for the current item
+            const food_sub_item_id = row.dataset.foodId;
+            itemData.push({food_sub_item_id, itemName, price, quantity, total});
+
+        }
+
+        const tableId = '<%= table_id %>'; // Assuming you're using this to inject the table ID
+        formData.push({
+            orderID: publicVariables.orderId,
+            table_id: tableId,
+            items: itemData,
+            total_price: totalPrice,
+            statusCode: buttonValue
+        });
+
+        // console.log(formData);
+        if (formData.length === 0 || itemData.length === 0) {
+            iziToast.info({
+                title: 'Info',
+                message: 'Please add items to the order.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        if (buttonValue === 4 || buttonValue === 3) {
+            const paymentMode = document.querySelector('input[name="flexRadioDefault"]:checked');
+            if (!paymentMode) {
+                iziToast.info({
+                    title: 'Info',
+                    message: 'Please select a payment mode.',
+                    position: 'topRight'
+                });
+                return;
+            }
+            formData[0].paymentMode = paymentMode.value;
+        }
+
+
+        if (buttonValue === 3) {
+            const url = `/branch/print?table_id=${tableId}&order_id=${publicVariables.orderId}`;
+            window.open(url, '_blank');
+        }
+
+        $.ajax({
+            url: "/branch/update-order",
+            type: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(formData),
+            success: function (res) {
+                if (res.success) {
+                    window.location.href = "/branch/assign-table";
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: res.msg || 'Failed to update order.',
+                        position: 'topRight'
+                    });
+                }
+            },
+            error: function() {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'An error occurred while updating the order.',
+                    position: 'topRight'
+                });
+            }
+        });
+    }
+
+    function calculateTotalAmount() {
+        let totalAmount = 0;
+
+        // Loop through orderTableBody
+        const orderTableBody = document.getElementById('orderTableBody');
+        for (let i = 0; i < orderTableBody.rows.length; i++) {
+            const row = orderTableBody.rows[i];
+            if (row.classList.contains('timing-row')) {
+                continue;
+            }
+            const totalCell = row.cells[3];
+            if (totalCell && totalCell.textContent) {
+                totalAmount += parseFloat(totalCell.textContent.replace('₹', ''));
+            }
+        }
+
+        // Set the total amount in the DOM
+        document.getElementById('totalAmount').textContent = `₹ ${totalAmount.toFixed(2)}`;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const orderData = `<%- JSON.stringify(order) %>`;
+        // console.log(orderData);
+        displayOrderData(orderData);
+
+    });
+
+    async function displayOrderData(orderData) {
+        try {
+            const orders = JSON.parse(orderData);
+            console.log(orders); // Log parsed JSON data
+
+            publicVariables.orderId = orders[0]._id;
+
+            // console.logorders._id)
+            const orderTableBody = document.getElementById('orderTableBody');
+            orderTableBody.innerHTML = '';
+
+            let prevTiming = null;
+
+            for (const order of orders) {
+                const {items} = order;
+
+                for (const orderItem of items) {
+                    const {
+                        _id,
+                        food_sub_item_id,
+                        quantity,
+                        sub_item_name,
+                        price,
+                        created_at,
+                        itemStatus,
+                        item_name
+                    } = orderItem;
+
+                    // console.log(_id)
+                    if (!food_sub_item_id) {
+                        console.error('food_sub_item_id is undefined:', orderItem);
+                        continue; // Skip processing if food_sub_item_id is undefined
+                    }
+
+                    // Get the current timing in HH:MM format
+                    const currentTiming = new Date(created_at).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+
+                    // Check if the timing has changed
+                    if (currentTiming !== prevTiming) {
+                        // Add a row for displaying timing
+                        const timingRow = orderTableBody.insertRow();
+                        timingRow.innerHTML = `<tr><td colspan="6" class="timing-row">${currentTiming}</td></tr>`;
+                        prevTiming = currentTiming; // Update the previous timing
+                    }
+
+                    // Find or create a new row for each item
+                    const newRow = orderTableBody.insertRow();
+                    newRow.dataset.foodId = food_sub_item_id; // Set the dataset to identify the sub-item
+
+                    const nameCell = newRow.insertCell(0);
+                    const priceCell = newRow.insertCell(1);
+                    const quantityCell = newRow.insertCell(2);
+                    const totalCell = newRow.insertCell(3);
+                    const removeCell = newRow.insertCell(4);
+
+                    // Set cell content
+                    nameCell.textContent = `${item_name} (${sub_item_name})`;
+                    priceCell.textContent = `₹ ${price.toFixed(2)}`;
+                    quantityCell.textContent = quantity;
+                    quantityCell.classList.add('quantit');
+                    const total = quantity * parseFloat(price);
+                    totalCell.classList.add('total');
+                    totalCell.textContent = `₹ ${total.toFixed(2)}`;
+
+                    const completedBtn = document.querySelector('button[type="button"][onclick="submitForm(4)"]');
+
+
+                    if (itemStatus === 2) {
+                        completedBtn.disabled = true;
+                        const removeBtn = document.createElement('button');
+                        removeBtn.textContent = 'Remove';
+                        removeBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'remove-btn');
+                        removeBtn.addEventListener('click', async function () {
+                            try {
+                                const requestData = {
+                                    orderId: orders[0]._id,
+                                    itemId: _id
+                                };
+                                // alert(JSON.stringify(requestData))
+                                $.ajax({
+                                    url: "/order-removeItem",
+                                    type: "DELETE",
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    data: JSON.stringify(requestData),
+                                    success: function (res) {
+                                        if (res.success) {
+                                            window.location.href = `/branch/view-order?table_id='<%= table_id %>'&order_id=${orders[0]._id}`;
+                                        } else {
+                                            // console.log("1")
+                                            alert(res.msg);
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("Error removing item:", error);
+                                        alert("An error occurred while removing the item. Please try again later.");
+                                    }
+                                });
+                            } catch (error) {
+                                console.error('Error removing item:', error);
+                            }
+                        });
+                        removeCell.appendChild(removeBtn);
+                    } else {
+                        const removeBtn = document.createElement('h4');
+                        removeBtn.textContent = 'KOT is Over';
+                        removeCell.appendChild(removeBtn);
+                    }
+                }
+            }
+
+            const radioButtons = document.getElementsByName('flexRadioDefault');
+            for (const radioButton of radioButtons) {
+                if (radioButton.value === orders[0].payment_mode) {
+                    radioButton.checked = true;
+                    break;
+                }
+            }
+
+            calculateTotalAmount();
+        } catch (error) {
+            console.error("Error displaying order data:", error);
+        }
+    }
+
+
+</script>
+
+<%- include("links.ejs") %>
+
+</body>
+</html>

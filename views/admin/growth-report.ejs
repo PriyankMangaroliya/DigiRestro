@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Growth Report | Admin</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="../admin/assets/css/app.min.css" />
+    <link rel="stylesheet" href="../admin/assets/css/style.css" />
+    <link rel="stylesheet" href="../admin/assets/css/components.css" />
+    <link rel="stylesheet" href="../admin/assets/css/custom.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper main-wrapper-1">
+            <%- include("nav-sidebar.ejs") %>
+            <div class="main-content">
+                <section class="section">
+                    <div class="section-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Growth Report Filters</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="filterForm">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Duration</label>
+                                                        <select class="form-control" name="duration" id="durationSelect">
+                                                            <option value="all">All Time</option>
+                                                            <option value="day">Today</option>
+                                                            <option value="month">Current Month</option>
+                                                            <option value="year">Current Year</option>
+                                                            <option value="custom">Custom Range</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div id="customDateRange" class="col-md-4 row" style="display: none;">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Start Date</label>
+                                                            <input type="date" class="form-control" name="startDate">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>End Date</label>
+                                                            <input type="date" class="form-control" name="endDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Select Type</label>
+                                                        <select class="form-control" name="type" id="typeSelect">
+                                                            <option value="client">Client</option>
+                                                            <option value="company">Company</option>
+                                                            <option value="branch">Branch</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                                <button type="reset" class="btn btn-secondary">Reset</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 id="tableTitle">Growth Data</h4>
+                                        <div class="card-header-action">
+                                            <button onclick="exportToExcel('growthTable', 'GrowthReport')" class="btn btn-lg btn-success mx-1">
+                                                <i class="fas fa-file-excel"></i> Excel
+                                            </button>
+                                            <button onclick="exportToPDF('growthTable', 'Growth Report')" class="btn btn-lg btn-danger mx-1">
+                                                <i class="fas fa-file-pdf"></i> PDF
+                                            </button>
+                                            <button onclick="window.print()" class="btn btn-lg btn-info mx-1">
+                                                <i class="fas fa-print"></i> Print
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover" id="growthTable" style="width: 100%;">
+                                                <thead>
+                                                    <tr id="tableHead">
+                                                        <!-- Populate manually -->
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Libraies -->
+    <script src="../admin/assets/js/app.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // Export Functions
+        async function exportToExcel(tableId, title) {
+            const table = document.getElementById(tableId);
+            const wb = XLSX.utils.table_to_book(table);
+            XLSX.writeFile(wb, `${title}.xlsx`);
+        }
+
+        async function exportToPDF(tableId, title) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text(title, 14, 15);
+            doc.autoTable({ html: `#${tableId}`, startY: 20 });
+            doc.save(`${title}.pdf`);
+        }
+
+        $(document).ready(function () {
+            $('#durationSelect').on('change', function () {
+                if ($(this).val() === 'custom') {
+                    $('#customDateRange').show();
+                } else {
+                    $('#customDateRange').hide();
+                }
+            });
+
+            $('#filterForm').on('submit', function (e) {
+                e.preventDefault();
+                loadData();
+            });
+
+            function loadData() {
+                const formData = $('#filterForm').serialize();
+                const type = $('#typeSelect').val();
+                $.ajax({
+                    url: '/admin/get-growth-report',
+                    type: 'GET',
+                    data: formData,
+                    success: function (res) {
+                        if (res.success) {
+                            renderTable(res.data, type);
+                        }
+                    }
+                });
+            }
+
+            function renderTable(data, type) {
+                const head = $('#tableHead');
+                const tbody = $('#growthTable tbody');
+                head.empty();
+                tbody.empty();
+
+                if (type === 'client') {
+                    head.append('<th>Name</th><th>Email</th><th>Mobile No</th><th>Status</th><th>Created At</th>');
+                } else if (type === 'company') {
+                    head.append('<th>Company Name</th><th>Legal Name</th><th>Owner</th><th>Branches</th><th>Created At</th>');
+                } else { // branch
+                    head.append('<th>Branch Name</th><th>Email</th><th>Company</th><th>Location</th><th>Created At</th>');
+                }
+
+                if (data.length === 0) {
+                    tbody.append(`<tr><td colspan="5" class="text-center">No data found</td></tr>`);
+                    return;
+                }
+
+                data.forEach(item => {
+                    let row = '';
+                    if (type === 'client') {
+                        const badgeClass = item.is_active ? 'badge-success' : 'badge-danger';
+                        row = `
+                            <td>${item.name}</td>
+                            <td>${item.email_id}</td>
+                            <td>${item.mobile_no}</td>
+                            <td><span class="badge ${badgeClass}">${item.is_active ? 'Active' : 'Inactive'}</span></td>
+                            <td>${new Date(item.created_at).toLocaleDateString()}</td>`;
+                    } else if (type === 'company') {
+                        row = `
+                            <td>${item.company_name}</td>
+                            <td>${item.legal_name}</td>
+                            <td>${item.ownerName || '-'}</td>
+                            <td>${item.branchCount}</td>
+                            <td>${new Date(item.created_at).toLocaleDateString()}</td>`;
+                    } else { // branch
+                        row = `
+                            <td>${item.name}</td>
+                            <td>${item.email_id}</td>
+                            <td>${item.companyName || '-'}</td>
+                            <td>${(item.city || item.state) ? (item.city + ', ' + item.state) : '-'}</td>
+                            <td>${new Date(item.created_at).toLocaleDateString()}</td>`;
+                    }
+                    tbody.append(`<tr>${row}</tr>`);
+                });
+            }
+
+            // Initial load
+            loadData();
+        });
+    </script>
+</body>
+
+</html>

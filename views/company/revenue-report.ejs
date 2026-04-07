@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Revenue Report | DigiRestro</title>
+</head>
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Revenue Report Filters</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form id="filterForm">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Duration</label>
+                                                    <select class="form-control" name="duration" id="durationSelect">
+                                                        <option value="all">All Time</option>
+                                                        <option value="day">Today</option>
+                                                        <option value="month">Current Month</option>
+                                                        <option value="year" selected>Current Year</option>
+                                                        <option value="calendar">Custom Range</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div id="customDateRange" class="col-md-4 row" style="display: none;">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Start Date</label>
+                                                        <input type="date" class="form-control" name="startDate">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>End Date</label>
+                                                        <input type="date" class="form-control" name="endDate">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Select Company</label>
+                                                    <select class="form-control" name="companyId" id="companySelectReport">
+                                                        <option value="all">All Companies</option>
+                                                        <% formattedCompanies.forEach(c => { %>
+                                                            <option value="<%= c._id %>" <%= c._id.toString() === companyId.toString() ? 'selected' : '' %>><%= c.company_name %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>Select Branch</label>
+                                                    <select class="form-control" name="branchId" id="branchSelectReport">
+                                                        <option value="all">All Branches</option>
+                                                        <% branches.forEach(b => { %>
+                                                            <option value="<%= b._id %>" data-company="<%= b.company_id %>"><%= b.branch_name %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-end">
+                                                <div class="form-group mb-4">
+                                                    <button type="submit" class="btn btn-primary">Apply</button>
+                                                    <button type="reset" class="btn btn-secondary ml-2" id="resetBtn">Reset</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Revenue by Branch</h4>
+                                    <div class="card-header-action">
+                                        <button onclick="downloadChart(revenueChart, 'png', 'Revenue_Report')" class="btn btn-sm btn-primary mx-1">PNG</button>
+                                        <button onclick="downloadChart(revenueChart, 'jpg', 'Revenue_Report')" class="btn btn-sm btn-warning mx-1">JPG</button>
+                                        <button onclick="downloadChart(revenueChart, 'svg', 'Revenue_Report')" class="btn btn-sm btn-info mx-1">SVG</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="revenueChart"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Total Summary</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="summary-item mb-4">
+                                        <h6 class="text-muted">Total Revenue</h6>
+                                        <h3 id="totalRevenueStat">₹ 0</h3>
+                                    </div>
+                                    <div class="summary-item">
+                                        <h6 class="text-muted">Total Orders</h6>
+                                        <h3 id="totalOrdersStat">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Detailed Revenue Report</h4>
+                                    <div class="card-header-action">
+                                        <button onclick="exportToExcel('revenueTable', 'RevenueReport')" class="btn btn-success mx-1">
+                                            <i class="fas fa-file-excel"></i> Excel
+                                        </button>
+                                        <button onclick="exportToPDF('revenueTable', 'Revenue Report')" class="btn btn-danger mx-1">
+                                            <i class="fas fa-file-pdf"></i> PDF
+                                        </button>
+                                        <button onclick="window.print()" class="btn btn-info mx-1">
+                                            <i class="fas fa-print"></i> Print
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="revenueTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Company</th>
+                                                    <th>Branch</th>
+                                                    <th>Total Orders</th>
+                                                    <th>Total Revenue (₹)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Dynamic Content -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+
+<!-- Export Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<!-- ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+    let revenueChart;
+
+    async function exportToExcel(tableId, title) {
+        const table = document.getElementById(tableId);
+        const wb = XLSX.utils.table_to_book(table);
+        XLSX.writeFile(wb, `${title}.xlsx`);
+    }
+
+    async function exportToPDF(tableId, title) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.text(title, 14, 15);
+        doc.autoTable({ html: `#${tableId}`, startY: 20 });
+        doc.save(`${title}.pdf`);
+    }
+
+    async function downloadChart(chart, format, filename) {
+        const { imgURI } = await chart.dataURI();
+        if (format === 'svg') {
+            const svg = chart.paper().svg();
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `${filename}.svg`; a.click();
+        } else {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width; canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`);
+                const a = document.createElement('a'); a.href = dataUrl; a.download = `${filename}.${format}`; a.click();
+            };
+            img.src = imgURI;
+        }
+    }
+
+    $(document).ready(function () {
+        $('#durationSelect').on('change', function () {
+            if ($(this).val() === 'calendar') $('#customDateRange').show();
+            else $('#customDateRange').hide();
+        });
+
+        $('#companySelectReport').on('change', function () {
+            const companyId = $(this).val();
+            $('#branchSelectReport').val('all');
+            if (companyId === 'all') $('#branchSelectReport option').show();
+            else {
+                $('#branchSelectReport option[value!="all"]').hide();
+                $('#branchSelectReport option[data-company="' + companyId + '"]').show();
+            }
+        });
+
+        $('#filterForm').on('submit', function (e) {
+            e.preventDefault();
+            loadRevenueData();
+        });
+
+        $('#resetBtn').on('click', function() {
+            $('#filterForm')[0].reset();
+            $('#customDateRange').hide();
+            // Trigger change for company select if needed
+            $('#companySelectReport').trigger('change');
+            loadRevenueData();
+        });
+
+        function loadRevenueData() {
+            const formData = $('#filterForm').serialize();
+            $.ajax({
+                url: `/company/get-revenue-data`,
+                type: 'GET',
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        renderTable(res.data);
+                        renderChart(res.data);
+                        updateStats(res.data);
+                    }
+                }
+            });
+        }
+
+        function renderTable(data) {
+            const tbody = $('#revenueTable tbody');
+            tbody.empty();
+            if (data.length === 0) {
+                tbody.append('<tr><td colspan="4" class="text-center">No data found</td></tr>');
+                return;
+            }
+            data.forEach(item => {
+                tbody.append(`<tr>
+                    <td>${item.company_name}</td>
+                    <td>${item.branch_name}</td>
+                    <td>${item.total_orders}</td>
+                    <td>₹ ${item.total_revenue.toFixed(2)}</td>
+                </tr>`);
+            });
+        }
+
+        function renderChart(data) {
+            const options = {
+                series: [{
+                    name: 'Revenue',
+                    data: data.map(item => item.total_revenue)
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                xaxis: {
+                    categories: data.map(item => item.branch_name)
+                },
+                colors: ['#6777ef'],
+                title: {
+                    text: 'Revenue Distribution by Branch',
+                    align: 'center'
+                }
+            };
+
+            if (revenueChart) revenueChart.destroy();
+            revenueChart = new ApexCharts(document.querySelector("#revenueChart"), options);
+            revenueChart.render();
+        }
+
+        function updateStats(data) {
+            let totalRev = 0;
+            let totalOrd = 0;
+            data.forEach(item => {
+                totalRev += item.total_revenue;
+                totalOrd += item.total_orders;
+            });
+            $('#totalRevenueStat').text(`₹ ${totalRev.toLocaleString()}`);
+            $('#totalOrdersStat').text(totalOrd.toLocaleString());
+        }
+
+        loadRevenueData();
+    });
+</script>
+
+<!-- General JS Scripts -->
+<script src="assets/js/app.min.js"></script>
+<script src="assets/js/scripts.js"></script>
+<script src="assets/js/custom.js"></script>
+</body>
+</html>

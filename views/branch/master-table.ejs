@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Branch - Tables</title>
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+
+        <div class="row">
+            <div class="col-12 col-xl-9 col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Table List</h4>
+                        </div>
+                    </div>
+                    <div class="card-body px-0">
+                        <div class="table-responsive">
+                            <table id="user-list-table" class="table table-striped" role="grid"
+                                   data-toggle="data-table">
+                                <thead>
+                                <tr class="ligth">
+                                    <th>No</th>
+                                    <th>Table Name</th>
+                                    <th>Capacity</th>
+                                    <th>Area Name</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <% if (tables.length > 0) { %>
+                                    <% for (let i = 0; i < tables.length; i++) { %>
+                                        <tr>
+                                            <td><%= i + 1 %></td>
+                                            <td><%= tables[i].table_name %></td>
+                                            <td><%= tables[i].capacity %></td>
+                                            <td><%= getAreaName(tables[i].area_id) %></td>
+                                            <td>
+                                                <% if(tables[i].is_active == true){ %>
+                                                    <a href="/branch/table-activeAndDeactive?id=<%= tables[i]._id %>&value=true"><span
+                                                                class="badge bg-primary">Active</span></a>
+                                                <% }else { %>
+                                                    <a href="/branch/table-activeAndDeactive?id=<%= tables[i]._id %>&value=false"><span
+                                                                class="badge bg-danger">Deactive</span></a>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <div class="flex align-items-center list-user-action">
+                                                    <a class="update-form btn btn-sm btn-icon btn-warning"
+                                                       data-table-id="<%= tables[i]._id %>"
+                                                       data-table-name="<%= tables[i].table_name %>"
+                                                       data-capacity="<%= tables[i].capacity %>"
+                                                       data-area-id="<%= tables[i].area_id %>">
+                                                    <span class="btn-inner">
+                                                       <svg width="20" viewBox="0 0 24 24" fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                          <path d="M11.4925 2.78906H7.75349C4.67849 2.78906 2.75049 4.96606 2.75049 8.04806V16.3621C2.75049 19.4441 4.66949 21.6211 7.75349 21.6211H16.5775C19.6625 21.6211 21.5815 19.4441 21.5815 16.3621V12.3341"
+                                                                stroke="currentColor" stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"></path>
+                                                          <path fill-rule="evenodd" clip-rule="evenodd"
+                                                                d="M8.82812 10.921L16.3011 3.44799C17.2321 2.51799 18.7411 2.51799 19.6721 3.44799L20.8891 4.66499C21.8201 5.59599 21.8201 7.10599 20.8891 8.03599L13.3801 15.545C12.9731 15.952 12.4211 16.181 11.8451 16.181H8.09912L8.19312 12.401C8.20712 11.845 8.43412 11.315 8.82812 10.921Z"
+                                                                stroke="currentColor" stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"></path>
+                                                          <path d="M15.1655 4.60254L19.7315 9.16854" stroke="currentColor"
+                                                                stroke-width="1.5" stroke-linecap="round"
+                                                                stroke-linejoin="round"></path>
+                                                       </svg>
+                                                    </span>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-icon btn-danger" data-toggle="tooltip"
+                                                       data-table-id="<%= tables[i]._id %>"
+                                                       data-original-title="Delete" onclick="Aredelete(this)">
+                                                    <span class="btn-inner">
+                                                       <svg width="20" viewBox="0 0 24 24" fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                                                          <path d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
+                                                                stroke="currentColor" stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"></path>
+                                                          <path d="M20.708 6.23975H3.75" stroke="currentColor"
+                                                                stroke-width="1.5"
+                                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                                          <path d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
+                                                                stroke="currentColor" stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"></path>
+                                                       </svg>
+                                                    </span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center">No tables found.</td>
+                                    </tr>
+                                <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-3 col-lg-4">
+                <% if(area.length > 0 ){ %>
+                    <div class="card addform">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Add Table</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form class="row g-3 needs-validation" action="/branch/add-table" method="post" novalidate>
+                                <div class="form-group">
+                                    <label for="validationCustom05" class="form-label">Table Name</label>
+                                    <input type="text" class="form-control" id="table_name" name="table_name"
+                                           placeholder="Table Name"
+                                           required  onkeypress="return (event.charCode > 64 && event.charCode < 91)
+                                       || (event.charCode > 96 && event.charCode < 123)
+                                       || (event.charCode > 31 && event.charCode < 33)
+                                       || (event.charCode > 47 && event.charCode < 58)">
+                                    <div class="invalid-feedback">
+                                        Please enter table name.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="validationCustom05" class="form-label">Table Capacity</label>
+                                    <input type="text" class="form-control" id="capacity" name="capacity"
+                                           placeholder="Table Capacity" minlength="1" maxlength="2"
+                                           required onkeypress="return (event.charCode > 47 && event.charCode < 58)">
+                                    <div class="invalid-feedback">
+                                        Please enter Table Capacity.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="validationCustom04" class="form-label">Area</label>
+                                    <select class="form-control" required name="area_id">
+                                        <% for (let i = 0; i < area.length; i++) { %>
+                                            <option value="<%= area[i]._id %>"><%= area[i].area_name %></option>
+                                        <% } %>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a area.
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Add Table</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <center>
+                                <h5>Please enter Area</h5>
+                                <a href="/branch/master-area" class="btn btn-primary">Add Area</a>
+                            </center>
+                        </div>
+                    </div>
+
+                <% } %>
+                <div class="card updateform">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Update Table</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form class="row g-3 needs-validation" method="post" action="/branch/update-table" novalidate>
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" id="table_id" name="table_id" readonly>
+                                <label for="validationCustom05" class="form-label">Table Name</label>
+                                <input type="text" class="form-control" id="table_name" name="table_name"
+                                       placeholder="Table Name"
+                                       required onkeypress="return (event.charCode > 64 && event.charCode < 91)
+                                       || (event.charCode > 96 && event.charCode < 123)
+                                       || (event.charCode > 31 && event.charCode < 33)
+                                       || (event.charCode > 47 && event.charCode < 58)">
+                                <div class="invalid-feedback">
+                                    Please enter table name.
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="validationCustom05" class="form-label">Table Capacity</label>
+                                <input type="text" class="form-control" id="capacity" name="capacity"
+                                       placeholder="Table Capacity" minlength="1" maxlength="2"
+                                       required onkeypress="return (event.charCode > 47 && event.charCode < 58)">
+                                <div class="invalid-feedback">
+                                    Please enter Table Capacity.
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="validationCustom04" class="form-label">Area</label>
+                                <select class="form-control" required name="area_id" id="area_id_update">
+                                    <% for (let i = 0; i < area.length; i++) { %>
+                                        <option value="<%= area[i]._id %>"><%= area[i].area_name %></option>
+                                    <% } %>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a area.
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".updateform").hide();
+
+        $(document).on("click", ".update-form", function () {
+            $(".updateform").show();
+            $(".addform").hide();
+
+            var table_id = $(this).attr("data-table-id");
+            var table_name = $(this).attr("data-table-name");
+            var capacity = $(this).attr("data-capacity");
+            var area_id = $(this).attr("data-area-id");
+
+            updateAreaSelect(area_id);
+            updateTable(table_id, table_name, capacity);
+        });
+
+        function updateTable(table_id, table_name, capacity) {
+            $("input[name='table_name']").val(table_name);
+            $("input[name='table_id']").val(table_id);
+            $("input[name='capacity']").val(capacity);
+        }
+    });
+
+    function updateAreaSelect(selectedAreaId) {
+        console.log(selectedAreaId)
+        const selectElement = document.getElementById('area_id_update');
+
+        for (let i = 0; i < selectElement.options.length; i++) {
+            const option = selectElement.options[i];
+            if (option.value === selectedAreaId) {
+                option.selected = true;
+                break;
+            }
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function Aredelete(element) {
+        const tableId = element.getAttribute('data-table-id');
+
+        console.log(tableId)
+        console.log("/branch/delete-table?id=" + tableId)
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/branch/delete-table?id=" + tableId,
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = "/branch/master-table";
+                        } else {
+                            iziToast.error({
+                                title: 'Error',
+                                message: response.message || 'Failed to delete the record.',
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Failed to delete the record.',
+                            position: 'topRight'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<%- include("links.ejs") %>
+
+</body>
+</html>

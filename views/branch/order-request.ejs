@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Branch - Order Requests</title>
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+        <div class="row">
+            <div class="col">
+                <div class="card bg-transparent">
+                    <div class="card-header d-flex align-items-center justify-content-between p-0 m-0 border-bottom-0">
+                        <div class="header-title">
+                            <h4 class="card-title">Order Requests</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4">
+            <div class="col">
+                <div class="card order-history-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div>
+                                <h6 class="heading-title mb-2">Priyank Mangaroliya</h6>
+                                <h6 class="heading-title mb-2">Person : 6</h6>
+                                <p class="mb-0">23 Feb 2021, 08:28 PM</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="heading-title fw-bolder text-primary">Items</h6>
+                            <h6 class="heading-title fw-bolder text-primary">Qty</h6>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Vegetable Mixups</h6>
+                                <h6 class="heading-title fw-bolder">1</h6>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Pasta</h6>
+                                <h6 class="heading-title fw-bolder">10</h6>
+                            </div>
+
+                            <p>Vegetable</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="">
+                                <label>
+                                    <select class="fw-bolder border-success rounded p-2" style="width: 100px;">
+                                        <option class="heading-title">G1 - 5</option>
+                                        <option class="heading-title">G3 - 3</option>
+                                        <option class="heading-title">F4 - 2</option>
+                                        <option class="heading-title">S1 - 6</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center" id="action-02">
+                                <button class="btn btn-icon btn-outline-success rounded ctc-button" data-action="click"
+                                        data-closest="#action-02" data-status="complete">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.667969 4.09434L3.93567 7.33366L10.668 0.666992"
+                                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Accepted</span>
+                                </span>
+                                </button>
+                                <button class="btn btn-icon btn-outline-danger rounded ctc-button ms-3"
+                                        data-action="click" data-closest="#action-02" data-status="reject">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.6654 5.33496L5.33203 10.6683" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M10.6643 10.6663L5.33203 5.33301" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Rejected</span>
+                                </span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card order-history-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div>
+                                <h6 class="heading-title mb-2">Priyank Mangaroliya</h6>
+                                <h6 class="heading-title mb-2">Person : 6</h6>
+                                <p class="mb-0">23 Feb 2021, 08:28 PM</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="heading-title fw-bolder text-primary">Items</h6>
+                            <h6 class="heading-title fw-bolder text-primary">Qty</h6>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Vegetable Mixups</h6>
+                                <h6 class="heading-title fw-bolder">1</h6>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Pasta</h6>
+                                <h6 class="heading-title fw-bolder">10</h6>
+                            </div>
+
+                            <p>Vegetable</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="">
+                                <label>
+                                    <select class="fw-bolder border-success rounded p-2" style="width: 100px;">
+                                        <option class="heading-title">G1 - 5</option>
+                                        <option class="heading-title">G3 - 3</option>
+                                        <option class="heading-title">F4 - 2</option>
+                                        <option class="heading-title">S1 - 6</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center" id="action-02">
+                                <button class="btn btn-icon btn-outline-success rounded ctc-button" data-action="click"
+                                        data-closest="#action-02" data-status="complete">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.667969 4.09434L3.93567 7.33366L10.668 0.666992"
+                                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Accepted</span>
+                                </span>
+                                </button>
+                                <button class="btn btn-icon btn-outline-danger rounded ctc-button ms-3"
+                                        data-action="click" data-closest="#action-02" data-status="reject">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.6654 5.33496L5.33203 10.6683" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M10.6643 10.6663L5.33203 5.33301" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Rejected</span>
+                                </span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card order-history-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div>
+                                <h6 class="heading-title mb-2">Priyank Mangaroliya</h6>
+                                <h6 class="heading-title mb-2">Person : 6</h6>
+                                <p class="mb-0">23 Feb 2021, 08:28 PM</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="heading-title fw-bolder text-primary">Items</h6>
+                            <h6 class="heading-title fw-bolder text-primary">Qty</h6>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Vegetable Mixups</h6>
+                                <h6 class="heading-title fw-bolder">1</h6>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Pasta</h6>
+                                <h6 class="heading-title fw-bolder">10</h6>
+                            </div>
+
+                            <p>Vegetable</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="">
+                                <label>
+                                    <select class="fw-bolder border-success rounded p-2" style="width: 100px;">
+                                        <option class="heading-title">G1 - 5</option>
+                                        <option class="heading-title">G3 - 3</option>
+                                        <option class="heading-title">F4 - 2</option>
+                                        <option class="heading-title">S1 - 6</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center" id="action-02">
+                                <button class="btn btn-icon btn-outline-success rounded ctc-button" data-action="click"
+                                        data-closest="#action-02" data-status="complete">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.667969 4.09434L3.93567 7.33366L10.668 0.666992"
+                                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Accepted</span>
+                                </span>
+                                </button>
+                                <button class="btn btn-icon btn-outline-danger rounded ctc-button ms-3"
+                                        data-action="click" data-closest="#action-02" data-status="reject">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.6654 5.33496L5.33203 10.6683" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M10.6643 10.6663L5.33203 5.33301" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Rejected</span>
+                                </span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card order-history-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div>
+                                <h6 class="heading-title mb-2">Priyank Mangaroliya</h6>
+                                <h6 class="heading-title mb-2">Person : 6</h6>
+                                <p class="mb-0">23 Feb 2021, 08:28 PM</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="heading-title fw-bolder text-primary">Items</h6>
+                            <h6 class="heading-title fw-bolder text-primary">Qty</h6>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Vegetable Mixups</h6>
+                                <h6 class="heading-title fw-bolder">1</h6>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Pasta</h6>
+                                <h6 class="heading-title fw-bolder">10</h6>
+                            </div>
+
+                            <p>Vegetable</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="">
+                                <label>
+                                    <select class="fw-bolder border-success rounded p-2" style="width: 100px;">
+                                        <option class="heading-title">G1 - 5</option>
+                                        <option class="heading-title">G3 - 3</option>
+                                        <option class="heading-title">F4 - 2</option>
+                                        <option class="heading-title">S1 - 6</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center" id="action-02">
+                                <button class="btn btn-icon btn-outline-success rounded ctc-button" data-action="click"
+                                        data-closest="#action-02" data-status="complete">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.667969 4.09434L3.93567 7.33366L10.668 0.666992"
+                                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Accepted</span>
+                                </span>
+                                </button>
+                                <button class="btn btn-icon btn-outline-danger rounded ctc-button ms-3"
+                                        data-action="click" data-closest="#action-02" data-status="reject">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.6654 5.33496L5.33203 10.6683" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M10.6643 10.6663L5.33203 5.33301" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Rejected</span>
+                                </span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card order-history-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div>
+                                <h6 class="heading-title mb-2">Priyank Mangaroliya</h6>
+                                <h6 class="heading-title mb-2">Person : 6</h6>
+                                <p class="mb-0">23 Feb 2021, 08:28 PM</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="heading-title fw-bolder text-primary">Items</h6>
+                            <h6 class="heading-title fw-bolder text-primary">Qty</h6>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Vegetable Mixups</h6>
+                                <h6 class="heading-title fw-bolder">1</h6>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <h6 class="heading-title fw-bolder">Pasta</h6>
+                                <h6 class="heading-title fw-bolder">10</h6>
+                            </div>
+
+                            <p>Vegetable</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="">
+                                <label>
+                                    <select class="fw-bolder border-success rounded p-2" style="width: 100px;">
+                                        <option class="heading-title">G1 - 5</option>
+                                        <option class="heading-title">G3 - 3</option>
+                                        <option class="heading-title">F4 - 2</option>
+                                        <option class="heading-title">S1 - 6</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center" id="action-02">
+                                <button class="btn btn-icon btn-outline-success rounded ctc-button" data-action="click"
+                                        data-closest="#action-02" data-status="complete">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.667969 4.09434L3.93567 7.33366L10.668 0.666992"
+                                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Accepted</span>
+                                </span>
+                                </button>
+                                <button class="btn btn-icon btn-outline-danger rounded ctc-button ms-3"
+                                        data-action="click" data-closest="#action-02" data-status="reject">
+                                <span class="btn-inner d-flex align-items-center">
+                                    <span>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.6654 5.33496L5.33203 10.6683" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M10.6643 10.6663L5.33203 5.33301" stroke="currentColor"
+                                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="status pe-2">Rejected</span>
+                                </span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<%- include("links.ejs") %>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Digirestro - Admin</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper main-wrapper-1">
+            <%- include("nav-sidebar.ejs") %>
+
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- write a code -->
+
+                    <section class="section">
+                        <div class="section-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h4>Inquiry</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped" id="table-1">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Index</th>
+                                                            <th>Name</th>
+                                                            <th>Email Id</th>
+                                                            <th>Mobile No</th>
+                                                            <th>Subject</th>
+                                                            <th>Message</th>
+                                                            <th>Created At</th>
+                                                            <th>Status</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% if (viewInqData.length > 0) { %>
+                                                            <% for(let i=0; i < viewInqData.length; i++){ %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= i + 1 %>
+                                                                    </td>
+                                                                    <!-- <td><%= viewInqData[i]._id %></td> -->
+                                                                    <td>
+                                                                        <%= viewInqData[i].name %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= viewInqData[i].email_id %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= viewInqData[i].mobile_no %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= viewInqData[i].subject %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= viewInqData[i].message %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= viewInqData[i].created_at.toLocaleString('en-US',
+                                                                            { weekday: 'short' , day: 'numeric' ,
+                                                                            month: 'short' , year: 'numeric' }) %>
+                                                                            <br>
+                                                                            <%= viewInqData[i].created_at.toLocaleString('en-US',
+                                                                                { hour: '2-digit' , minute: '2-digit' ,
+                                                                                second: '2-digit' , timeZoneName: 'short' })
+                                                                                %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if(viewInqData[i].replied==true){ %>
+                                                                            <!-- <div class="badge badge-success badge-shadow">Active</div> -->
+                                                                            <a href="#"
+                                                                                class="badge badge-success badge-shadow">Replied</a>
+                                                                            <% }else { %>
+                                                                                <!-- <div class="badge badge-danger badge-shadow">Deactive</div> -->
+                                                                                <a href="#"
+                                                                                    class="badge badge-danger badge-shadow">Not
+                                                                                    Replied</a>
+                                                                                <% } %>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <% if(viewInqData[i].replied !=true){ %>
+                                                                            <a href="javascript:void(0)"
+                                                                                class="settingPanelToggle btn btn-primary replybtn"
+                                                                                onclick="updateReplyData('<%= viewInqData[i]._id %>', '<%= viewInqData[i].email_id %>', '<%= viewInqData[i].subject %>')"><i
+                                                                                    class="fas fa-reply"></i></a>
+                                                                            <% } %>
+                                                                    </td>
+                                                                </tr>
+                                                            <% } %>
+                                                        <% } else { %>
+                                                            <tr>
+                                                                <td colspan="9" class="text-center">No inquiries found.</td>
+                                                            </tr>
+                                                        <% } %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="settingSidebar settingSidebar1 reply">
+                        <div class="fade show active">
+                            <div class="setting-panel-header">Reply to Inquiry</div>
+                            <div class="card m-4">
+                                <form class="needs-validation" novalidate="" method="post"
+                                    action="/admin/send-enquiry-reply">
+                                    <div class="card-header">
+                                        <h4>Send Reply</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <input type="hidden" name="id" id="reply_id">
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <input type="email" class="form-control" name="email_id" id="reply_email"
+                                                readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Subject</label>
+                                            <input type="text" class="form-control" name="subject" id="reply_subject"
+                                                required>
+                                            <div class="invalid-feedback">Please provide a subject.</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Message</label>
+                                            <textarea class="form-control" name="text" id="reply_text" rows="5" required
+                                                style="height: 150px;"></textarea>
+                                            <div class="invalid-feedback">Please provide a message.</div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-primary">Send Reply</button>
+                                            <a href="javascript:void(0)"
+                                                class="replybtn btn btn-icon icon-left btn-primary btn-restore-theme ml-2">Cancel</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <script>
+        function updateReplyData(id, email, subject) {
+            document.getElementById('reply_id').value = id;
+            document.getElementById('reply_email').value = email;
+            document.getElementById('reply_subject').value = "Re: " + subject;
+        }
+    </script>
+    <script src="../admin/assets/js/page/datatables.js"></script>
+</body>
+
+</html>

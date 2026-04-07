@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Branch - Food Order</title>
+    <style>
+        .box {
+            width: 120px;
+            height: 120px;
+            text-align: center;
+            outline-style: dotted;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Table View</h4>
+                </div>
+                <div>
+                    <a href="/branch/master-table" class="btn btn-primary btn-sm rounded align-content-end">+ Add Table</a>
+<!--                    <a href="order-request.php" class="btn btn-primary btn-sm rounded align-content-end">Order-->
+<!--                        Requst</a>-->
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-legend-row">
+                    <p class="bg-soft-secondary">Blank Table</p>
+                    <p class="bg-soft-info">Running Table</p>
+                    <p class="bg-soft-warning">KOT Table</p>
+                    <p class="bg-soft-success">Printed Table</p>
+                </div>
+
+                <div class="row">
+                    <% if (areaWiseTables.length === 0) { %>
+                        <div class="col-12 text-center py-5">
+                            <h4 class="text-muted">Please add Tables and Areas first.</h4>
+                        </div>
+                    <% }else{ %>
+                        <% areaWiseTables.forEach(area => { %>
+                            <div class="row">
+                                <p><%= area.area %></p>
+                                <div class="table-box-wrap">
+                                    <% if (area.tables.length > 0) { %>
+                                        <% area.tables.forEach(table => { %>
+                                            <% if (table.last_order && table.last_order.status !== 4) { %>
+                                                <% if (table.last_order.created_at) { %>
+                                                    <% const createdDate = new Date(table.last_order.created_at); %>
+                                                    <% const currentTime = new Date(); %>
+                                                    <% const timeDifference = Math.abs(currentTime - createdDate); %>
+                                                    <% const minutes = Math.floor((timeDifference / 1000) / 60); %>
+                                                    <% timing = minutes + ' mints'; %>
+                                                <% } %>
+                                                <% if (table.last_order.status === 1) { %>
+                                                    <a href="/branch/master-order?table_id=<%= table._id %>&order_id=<%= table.last_order._id %>&code=1">
+                                                        <div class="box shadow-lg pt-1 pb-1 m-2 mb-4 shadow-showcase text-center bg-soft-info"
+                                                             style="justify-content: center; align-items: center;">
+
+                                                            <span style="display: inline-block;"><%= timing %></span>
+                                                            <h3 style="margin: 0;"><%= table.table_name %></h3>
+                                                            <span><i class="fas fa-rupee-sign"></i><%= table.last_order.total_price %></span><br/>
+                                                            <a href="/branch/view-order?table_id=<%= table._id %>&order_id=<%= table.last_order._id %>"
+                                                               class="btn btn-light border-dark btn-sm">
+                                                                <i class="fa-solid fa-eye"></i>
+                                                            </a>
+                                                        </div>
+                                                    </a>
+                                                <% } else if (table.last_order.status === 2) { %>
+                                                    <a href="/branch/master-order?table_id=<%= table._id %>&order_id=<%= table.last_order._id %>&code=1">
+                                                        <div class="box shadow-lg pt-1 pb-1 m-2 mb-4 shadow-showcase text-center bg-soft-warning">
+                                                            <span><%= timing %></span>
+                                                            <h3 style="margin: 0;"><%= table.table_name %></h3>
+                                                            <span><i class="fas fa-rupee-sign"></i><%= table.last_order.total_price %></span><br/>
+                                                            <a href="/branch/view-order?table_id=<%= table._id %>&order_id=<%= table.last_order._id %>"
+                                                               class="btn btn-light border-dark btn-sm">
+                                                                <i class="fa-solid fa-eye"></i>
+                                                            </a>
+                                                        </div>
+                                                    </a>
+                                                <% } else if (table.last_order.status === 3) { %>
+                                                    <a href="/branch/view-order?table_id=<%= table._id %>&order_id=<%= table.last_order._id %>">
+                                                        <div class="box shadow-lg pt-1 pb-1 m-2 mb-4 shadow-showcase text-center bg-soft-success">
+                                                            <span><%= timing %></span>
+                                                            <h3 style="margin: 0;"><%= table.table_name %></h3>
+                                                            <span><i class="fas fa-rupee-sign"></i><%= table.last_order.total_price %></span><br/>
+                                                            <a href="/branch/print?table_id=<%= table._id %>&order_id=<%= table.last_order._id %>"
+                                                               class="btn btn-light border-dark btn-sm" target="_blank">
+                                                                <i class="fa-solid fa-print"></i>
+                                                            </a>
+                                                        </div>
+                                                    </a>
+                                                <% } %>
+                                            <% } else { %>
+                                                <a href="/branch/master-order?table_id=<%= table._id %>&code=2">
+                                                    <div class="box shadow-lg pt-1 pb-1 m-2 mb-4 shadow-showcase text-center bg-soft-secondary"
+                                                         style="justify-content: center; align-items: center;">
+                                                        <span style="display: inline-block;"></span>
+                                                        <h3 style="margin: 0;"><%= table.table_name %></h3>
+                                                        <span><%= table.capacity %></span><br/>
+                                                    </div>
+                                                </a>
+                                            <% } %>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p>No tables found for this area.</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+<%- include("links.ejs") %>
+</body>
+</html>

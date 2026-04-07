@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Digirestro - Company</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-geocoder/v0.1.0/leaflet-geocoder.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="main-wrapper main-wrapper-1">
+      <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <section class="section">
+            <div class="row">
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                          <div class="card-content">
+                            <h5 class="font-15">Today <br />Revenue</h5>
+                            <h2 class="mb-3 font-18" id="today">0</h2>
+                            <p class="mb-0">
+                              <span id="today-perc" class="col-green">0%</span> <span id="today-status">Increase</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="assets/img/banner/1.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                          <div class="card-content">
+                            <h5 class="font-15">Current Week Revenue</h5>
+                            <h2 class="mb-3 font-18" id="currentWeek">0</h2>
+                            <p class="mb-0">
+                              <span id="currentWeek-perc" class="col-green">0%</span> <span
+                                id="currentWeek-status">Increase</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="assets/img/banner/2.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                          <div class="card-content">
+                            <h5 class="font-15">Current Month Revenue</h5>
+                            <h2 class="mb-3 font-18" id="currentMonth">0</h2>
+                            <p class="mb-0">
+                              <span id="currentMonth-perc" class="col-green">0%</span> <span
+                                id="currentMonth-status">Increase</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="assets/img/banner/3.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                          <div class="card-content">
+                            <h5 class="font-15">Current Year Revenue</h5>
+                            <h2 class="mb-3 font-18" id="currentYear">0</h2>
+                            <p class="mb-0">
+                              <span id="currentYear-perc" class="col-green">0%</span> <span
+                                id="currentYear-status">Increase</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="assets/img/banner/4.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-lg-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Revenue Branch</h4>
+                    <div class="card-header-action">
+                      <select class="form-control d-inline-block" id="revenueBranchYearSelect" style="width: 100px;">
+                        <% const currentYear=new Date().getFullYear(); %>
+                          <% for(let year=currentYear; year>= 2024; year--) { %>
+                            <option value="<%= year %>" <%=year===currentYear ? 'selected' : '' %>>
+                              <%= year %>
+                            </option>
+                            <% } %>
+                      </select>
+                      <button onclick="downloadChart(chart4Instance, 'png', 'Revenue_Branch')" class="btn btn-sm btn-primary mx-1">PNG</button>
+                      <button onclick="downloadChart(chart4Instance, 'jpg', 'Revenue_Branch')" class="btn btn-sm btn-warning mx-1">JPG</button>
+                      <button onclick="downloadChart(chart4Instance, 'svg', 'Revenue_Branch')" class="btn btn-sm btn-info mx-1">SVG</button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div id="chart4" class="chartsh"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-12 col-lg-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Payment Method</h4>
+                    <div class="card-header-action">
+                      <select class="form-control d-inline-block" id="paymentMethodYearSelect" style="width: 100px;">
+                        <% for(let year=currentYear; year>= 2024; year--) { %>
+                          <option value="<%= year %>" <%=year===currentYear ? 'selected' : '' %>>
+                            <%= year %>
+                          </option>
+                          <% } %>
+                      </select>
+                      <button onclick="downloadChart(chart3Instance, 'png', 'Payment_Method')" class="btn btn-sm btn-primary mx-1">PNG</button>
+                      <button onclick="downloadChart(chart3Instance, 'jpg', 'Payment_Method')" class="btn btn-sm btn-warning mx-1">JPG</button>
+                      <button onclick="downloadChart(chart3Instance, 'svg', 'Payment_Method')" class="btn btn-sm btn-info mx-1">SVG</button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="summary">
+                      <div class="summary-chart active" data-tab-group="summary-tab" id="summary-chart">
+                        <div id="chart3" class="chartsh"></div>
+                      </div>
+                      <div data-tab-group="summary-tab" id="summary-text"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="map" style="width: 100%; height: 400px"></div>
+          </section>
+        </div>
+    </div>
+  </div>
+
+  <!-- General JS Scripts -->
+  <script src="assets/js/app.min.js"></script>
+  <!-- JS Libraies -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- Page Specific JS File -->
+  <script src="assets/js/page/index.js"></script>
+  <script src="assets/js/scripts.js"></script>
+  <script src="assets/js/custom.js"></script>
+  <script>
+    async function downloadChart(chart, format, filename) {
+        if (!chart) {
+            alert('Chart data not yet loaded or failed to render.');
+            return;
+        }
+        try {
+            const { imgURI } = await chart.dataURI();
+            if (format === 'svg') {
+                const svg = chart.paper().svg();
+                const blob = new Blob([svg], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = `${filename}.svg`; a.click();
+            } else {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width; canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    const dataUrl = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`);
+                    const a = document.createElement('a'); a.href = dataUrl; a.download = `${filename}.${format}`; a.click();
+                };
+                img.src = imgURI;
+            }
+        } catch (err) {
+            console.error('Download failed:', err);
+            alert('Chart download failed. Please check the console for details.');
+        }
+    }
+
+    var map = L.map('map');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var markers = []; // Array to store markers
+
+    // Function to geocode using OpenStreetMap Nominatim
+    function geocodeAddress(address, callback) {
+      var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address);
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            var result = data[0];
+            callback({
+              lat: parseFloat(result.lat),
+              lng: parseFloat(result.lon)
+            });
+          } else {
+            callback(null);
+          }
+        })
+        .catch(error => {
+          console.error('Error geocoding address:', error);
+          callback(null);
+        });
+    }
+
+    <% map.forEach(function (branch) { %>
+      geocodeAddress('<%= branch.city + ', ' + branch.state + ', ' + branch.country %>', function (coordinates) {
+        if (coordinates) {
+          var marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map);
+          marker.bindPopup('<%= branch.branch_name %>' + '<br/>' + '<%= branch.city + ', ' + branch.state + ', ' + branch.country %>').openPopup();
+          markers.push(marker);
+          if (markers.length === <%= map.length %>) {
+        var group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds());
+      }
+    } else {
+      console.error('Could not geocode address:', '<%= branch.city %>');
+    }
+    });
+    <% }); %>
+  </script>
+</body>
+
+</html>

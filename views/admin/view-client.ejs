@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Admin</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <%- include("nav-sidebar.ejs") %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- write a code -->
+
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Client</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="table-1" style="width:100%;">
+                                            <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Name</th>
+                                                <!--           <th>Last Name</th>-->
+                                                <th>Email Id</th>
+                                                <th>Mobile No</th>
+                                                <!-- <th>Image</th> -->
+                                                <th>Company</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% for (let i = 0; i < users.length; i++) { %>
+                                                <tr>
+                                                    <td><%= i + 1 %></td>
+                                                    <td><%= users[i].name %></td>
+                                                    <td><%= users[i].email_id %></td>
+                                                    <td><%= users[i].mobile_no %></td>
+                                                    <!--           <td><%= users[i].price %></td>-->
+                                                    <!-- <td>
+                                                        <a href="assets/img/users/user-8.png">
+                                                            <img alt="image"
+                                                                 src="assets/img/users/user-8.png"
+                                                                 width="50">
+                                                        </a>
+                                                    </td> -->
+                                                    <td><%= users[i].totalCompanies %></td>
+                                                    <td>
+<!--                                                           <a href="#" class="btn btn-primary"><i-->
+<!--                                                                       class="fas fa-edit"></i></a>-->
+<!--                                                        <a href="#" data-subscription-id="<%= users[i]._id %>"-->
+<!--                                                           onclick="Aredelete(this)"-->
+<!--                                                           class="btn btn-danger">-->
+<!--                                                            <i class="fas fa-trash"></i>-->
+<!--                                                        </a>-->
+                                                        <a href="/admin/view-specific-company?id=<%= users[i]._id %>" class="btn btn-primary">
+                                                            <i class="fas fa-info-circle"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <% } %>
+
+<!--                                            <tr>-->
+<!--                                                <td>1</td>-->
+<!--                                                <td>Pruthil</td>-->
+<!--                                                <td>Italiya</td>-->
+<!--                                                <td>pruthil@gmail.com</td>-->
+<!--                                                <td>8327423656</td>-->
+<!--                                                <td>-->
+<!--                                                    <a href="assets/img/users/user-8.png">-->
+<!--                                                        <img alt="image" src="assets/img/users/user-8.png"
+width="50">-->
+<!--                                                    </a>-->
+<!--                                                </td>-->
+<!--                                                <td>2</td>-->
+<!--                                                <td>-->
+<!--                                                    <a href="view-company.php" class="btn btn-primary"><i-->
+<!--                                                                class="fas fa-info-circle"></i></a>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+</div>
+<script src="../admin/assets/js/page/datatables.js"></script>
+
+</body>
+</html>

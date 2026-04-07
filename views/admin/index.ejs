@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Digirestro - Admin</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper main-wrapper-1">
+            <%- include("nav-sidebar.ejs") %>
+                <!--        Dashboard-->
+                <!--         Main Content -->
+                <div class="main-content">
+                    <section class="section">
+                        <div class="row ">
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="card">
+                                    <div class="card-statistic-4">
+                                        <div class="align-items-center justify-content-between">
+                                            <div class="row ">
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                                                    <div class="card-content">
+                                                        <h5 class="font-15">New Customers<br /><br /></h5>
+                                                        <h2 class="mb-3 font-18">
+                                                            <%= currentYearCustomerCount %>
+                                                        </h2>
+                                                        <p class="mb-0"><span class="col-orange">
+                                                                <%= incDecCustomers + "%" %>
+                                                            </span>
+                                                            <% if(incDecCustomers> 0){
+                                                                %>
+                                                                Increase
+                                                                <% }else{ %>
+                                                                    Decrease
+                                                                    <% } %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                                    <div class="banner-img">
+                                                        <img src="assets/img/banner/2.png" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="card">
+                                    <div class="card-statistic-4">
+                                        <div class="align-items-center justify-content-between">
+                                            <div class="row ">
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                                                    <div class="card-content">
+                                                        <h5 class="font-15">New Branch<br /><br /></h5>
+                                                        <h2 class="mb-3 font-18">
+                                                            <%= currentYearBranchCount %>
+                                                        </h2>
+                                                        <p class="mb-0"><span class="col-green">
+                                                                <%= incDecBranch + "%" %>
+                                                            </span>
+                                                            <% if(incDecBranch> 0){
+                                                                %>
+                                                                Increase
+                                                                <% }else{ %>
+                                                                    Decrease
+                                                                    <% } %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                                    <div class="banner-img">
+                                                        <img src="assets/img/banner/3.png" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="card">
+                                    <div class="card-statistic-4">
+                                        <div class="align-items-center justify-content-between">
+                                            <div class="row ">
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                                                    <div class="card-content">
+                                                        <h5 class="font-15">Purchased Subscription</h5>
+                                                        <h2 class="mb-3 font-18">
+                                                            <%= currentYearPurSubCount %>
+                                                        </h2>
+                                                        <p class="mb-0"><span class="col-green">
+                                                                <%= incDecPurSub + "%" %>
+                                                            </span>
+                                                            <% if(incDecPurSub> 0){
+                                                                %>
+                                                                Increase
+                                                                <% }else{ %>
+                                                                    Decrease
+                                                                    <% } %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                                    <div class="banner-img">
+                                                        <img src="assets/img/banner/1.png" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="card">
+                                    <div class="card-statistic-4">
+                                        <div class="align-items-center justify-content-between">
+                                            <div class="row ">
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3">
+                                                    <div class="card-content">
+                                                        <h5 class="font-15">Total Revenue<br /><br /></h5>
+                                                        <h2 class="mb-3 font-18">
+                                                            <%= cYRevenue %>
+                                                        </h2>
+                                                        <p class="mb-0"><span class="col-green">
+                                                                <%= incDecRevenue + "%" %>
+                                                            </span>
+                                                            <% if(incDecRevenue> 0){
+                                                                %>
+                                                                Increase
+                                                                <% }else{ %>
+                                                                    Decrease
+                                                                    <% } %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                                    <div class="banner-img">
+                                                        <img src="assets/img/banner/4.png" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-lg-12">
+                                <div class="card ">
+                                    <div class="card-header">
+                                        <h4>Monthly Revenue</h4>
+                                        <div class="card-header-action">
+                                            <select class="form-control d-inline-block" id="revenueYearSelect"
+                                                style="width: 100px;">
+                                                <% const currentYear=new Date().getFullYear(); %>
+                                                    <% for(let year=currentYear + 1; year>= 2024; year--) { %>
+                                                        <option value="<%= year %>" <%=year===currentYear ? 'selected'
+                                                            : '' %>>
+                                                            <%= year %>
+                                                        </option>
+                                                        <% } %>
+                                            </select>
+                                            <button
+                                                onclick="downloadChart(revenueChartInstance, 'png', 'MonthlyRevenue')"
+                                                class="btn btn-sm btn-primary mx-1">PNG</button>
+                                            <button
+                                                onclick="downloadChart(revenueChartInstance, 'jpg', 'MonthlyRevenue')"
+                                                class="btn btn-sm btn-warning mx-1">JPG</button>
+                                            <button
+                                                onclick="downloadChart(revenueChartInstance, 'svg', 'MonthlyRevenue')"
+                                                class="btn btn-sm btn-info mx-1">SVG</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div id="chart1"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Yearly Revenue</h4>
+                                        <div class="card-header-action">
+                                            <button onclick="downloadChart(yearlyChartInstance, 'png', 'YearlyRevenue')"
+                                                class="btn btn-sm btn-primary mx-1">PNG</button>
+                                            <button onclick="downloadChart(yearlyChartInstance, 'jpg', 'YearlyRevenue')"
+                                                class="btn btn-sm btn-warning mx-1">JPG</button>
+                                            <button onclick="downloadChart(yearlyChartInstance, 'svg', 'YearlyRevenue')"
+                                                class="btn btn-sm btn-info mx-1">SVG</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="chart4" class="chartsh"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Monthly Growth</h4>
+                                        <div class="card-header-action">
+                                            <select class="form-control d-inline-block" id="growthYearSelect"
+                                                style="width: 100px;">
+                                                <% for(let year=currentYear + 1; year>= 2024; year--) { %>
+                                                    <option value="<%= year %>" <%=year===currentYear ? 'selected' : ''
+                                                        %>>
+                                                        <%= year %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                            <button onclick="downloadChart(growthChartInstance, 'png', 'MonthlyGrowth')"
+                                                class="btn btn-sm btn-primary mx-1">PNG</button>
+                                            <button onclick="downloadChart(growthChartInstance, 'jpg', 'MonthlyGrowth')"
+                                                class="btn btn-sm btn-warning mx-1">JPG</button>
+                                            <button onclick="downloadChart(growthChartInstance, 'svg', 'MonthlyGrowth')"
+                                                class="btn btn-sm btn-info mx-1">SVG</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="summary">
+                                            <div class="summary-chart active" data-tab-group="summary-tab"
+                                                id="summary-chart">
+                                                <div id="growthChart" class="chartsh"></div>
+                                            </div>
+                                            <div data-tab-group="summary-tab" id="summary-text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </section>
+                </div>
+        </div>
+    </div>
+       <!-- Using CDN to ensure modern ApexCharts features (like dataURI) are available -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        async function downloadChart(chart, format, filename) {
+            if (!chart) {
+                console.error("Chart instance not found");
+                alert("Chart is still loading, please try again in a moment.");
+                return;
+            }
+            try {
+                if (typeof chart.dataURI !== 'function') {
+                    console.error("ApexCharts dataURI method not found. Ensure latest version is loaded.");
+                    return;
+                }
+                
+                const { imgURI } = await chart.dataURI();
+                if (format === 'svg') {
+                    const svgData = chart.paper().svg();
+                    const blob = new Blob([svgData], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url; a.download = `${filename}.svg`; a.click();
+                } else {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width; canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#fff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+                        const dataUrl = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`);
+                        const a = document.createElement('a'); a.href = dataUrl; a.download = `${filename}.${format}`; a.click();
+                    };
+                    img.src = imgURI;
+                }
+            } catch (error) {
+                console.error("Download failed:", error);
+            }
+        }
+
+
+    </script>
+    <script src="../admin/assets/js/page/index.js"></script>
+    <script src="../admin/assets/js/page/ckeditor.js"></script>
+</body>
+
+</html>

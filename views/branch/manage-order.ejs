@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Branch - Food Order</title>
+    <style>
+        .box {
+            width: 120px;
+            height: 120px;
+            text-align: center;
+            outline-style: dotted;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Orders</h4>
+                        </div>
+                    </div>
+                    <div class="card-body px-0">
+                        <div class="table-responsive">
+                            <table id="user-list-table" class="table table-striped" role="grid"
+                                   data-toggle="data-table">
+                                <thead>
+                                <tr class="ligth">
+                                    <th>No</th>
+                                    <th>Table</th>
+                                    <th>Payment Type</th>
+                                    <th>Total Price</th>
+                                    <th style="min-width: 100px">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <% if (orderData.length > 0) { %>
+                                    <% orderData.forEach((order, index) => { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= order.table_id ? order.table_id.table_name : 'N/A' %></td>
+                                            <th><%= ['online', 'card', 'cash', 'other'][order.payment_mode - 1] || 'N/A' %></th>
+                                            <td><%= order.total_price %></td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-primary view-details"
+                                                        data-index="<%= index %>">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No orders found.</td>
+                                    </tr>
+                                <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <% orderData.forEach((order, index) => { %>
+                    <div class="card order-details <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Orders: <%= index + 1 %></h4>
+                            </div>
+                        </div>
+                        <div class="card-body px-0">
+                            <div class="table-responsive">
+                                <table id="user-list-table" class="table table-striped" role="grid"
+                                       data-toggle="data-table">
+                                    <thead>
+                                    <tr class="light">
+                                        <th>No</th>
+                                        <th>Sub Item Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% order.item.forEach((item, itemIndex) => { %>
+                                        <tr>
+                                            <td><%= itemIndex + 1 %></td>
+                                            <td><%= `${item.food_sub_item_id.item_name} (${item.food_sub_item_id.sub_item_name})` %></td>
+                                            <td><%= item.quantity %></td>
+                                            <td><%= item.quantity * item.price %></td>
+                                        </tr>
+                                    <% }) %>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><%= order.total_price %></td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+    </div>
+</main>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const orderDetails = document.querySelectorAll('.order-details');
+
+        orderDetails.forEach((orderDetail) => {
+            orderDetail.style.display = 'none';
+        });
+
+        const viewButtons = document.querySelectorAll('.view-details');
+
+        viewButtons.forEach((button) => {
+            button.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+
+                // Hide all order details
+                orderDetails.forEach((orderDetail) => {
+                    orderDetail.style.display = 'none';
+                });
+
+                // Show the clicked order detail
+                document.querySelector('.order-details[data-index="' + index + '"]').style.display = 'block';
+            });
+        });
+    });
+</script>
+
+<%- include("links.ejs") %>
+</body>
+</html>

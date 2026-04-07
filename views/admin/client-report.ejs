@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Client Report | Admin</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="../admin/assets/css/app.min.css" />
+    <link rel="stylesheet" href="../admin/assets/css/style.css" />
+    <link rel="stylesheet" href="../admin/assets/css/components.css" />
+    <link rel="stylesheet" href="../admin/assets/css/custom.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper main-wrapper-1">
+            <%- include("nav-sidebar.ejs") %>
+            <div class="main-content">
+                <section class="section">
+                    <div class="section-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Client Selection Filter</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="filterForm">
+                                            <div class="row align-items-end">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Select Client (Owner)</label>
+                                                        <select class="form-control" name="client" id="clientSelect">
+                                                            <option value="all">--- Select Client ---</option>
+                                                            <% clients.forEach(c => { %>
+                                                                <option value="<%= c._id %>"><%= c.name %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary btn-block">Generate Report</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="reportSection" style="display: none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h4>Client Portfolio Report</h4>
+                                            <div class="card-header-action">
+                                                <button onclick="exportAllToExcel()" class="btn btn-lg btn-success mx-1">
+                                                    <i class="fas fa-file-excel"></i> Excel
+                                                </button>
+                                                <button onclick="exportAllToPDF()" class="btn btn-lg btn-danger mx-1">
+                                                    <i class="fas fa-file-pdf"></i> PDF
+                                                </button>
+                                                <button onclick="window.print()" class="btn btn-lg btn-info mx-1">
+                                                    <i class="fas fa-print"></i> Print
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="section-title mt-0">Client (Owner) Information</div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <p><strong>Name:</strong> <span id="clientNameText">-</span></p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p><strong>Email:</strong> <span id="clientEmailText">-</span></p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p><strong>Mobile No:</strong> <span id="clientMobileText">-</span></p>
+                                                </div>
+                                            </div>
+
+                                            <div class="section-title">Associated Companies</div>
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-hover" id="companyTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Company Name</th>
+                                                            <th>Legal Name</th>
+                                                            <th>Created At</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+
+                                            <div class="section-title">Branch Locations</div>
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-hover" id="branchTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Branch Name</th>
+                                                            <th>Company</th>
+                                                            <th>Location</th>
+                                                            <th>GST/PIN</th>
+                                                            <th>Created At</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Libraies -->
+    <script src="../admin/assets/js/app.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // Export Functions
+        async function exportAllToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // 1. Summary Sheet
+            const summaryData = [
+                ["Field", "Value"],
+                ["Owner Name", $('#clientNameText').text()],
+                ["Email", $('#clientEmailText').text()],
+                ["Mobile", $('#clientMobileText').text()]
+            ];
+            const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+
+            // 2. Companies Sheet
+            const wsCompanies = XLSX.utils.table_to_sheet(document.getElementById('companyTable'));
+            XLSX.utils.book_append_sheet(wb, wsCompanies, "Companies");
+
+            // 3. Branches Sheet
+            const wsBranches = XLSX.utils.table_to_sheet(document.getElementById('branchTable'));
+            XLSX.utils.book_append_sheet(wb, wsBranches, "Branches");
+
+            XLSX.writeFile(wb, `ClientPortfolioReport_${new Date().getTime()}.xlsx`);
+        }
+
+        async function exportAllToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(18);
+            doc.text("Client Portfolio Report", 14, 20);
+            
+            // Client Summary
+            doc.setFontSize(14);
+            doc.text("Client Information", 14, 32);
+            doc.setFontSize(11);
+            doc.text(`Name: ${$('#clientNameText').text()}`, 14, 40);
+            doc.text(`Email: ${$('#clientEmailText').text()}`, 14, 46);
+            doc.text(`Mobile: ${$('#clientMobileText').text()}`, 14, 52);
+
+            // Companies Table
+            doc.setFontSize(14);
+            doc.text("Associated Companies", 14, 65);
+            doc.autoTable({ html: '#companyTable', startY: 70 });
+
+            // Branches Table
+            const finalY = doc.lastAutoTable.finalY + 15;
+            doc.setFontSize(14);
+            doc.text("Branch Locations", 14, finalY);
+            doc.autoTable({ html: '#branchTable', startY: finalY + 5 });
+
+            doc.save(`ClientPortfolioReport_${new Date().getTime()}.pdf`);
+        }
+
+        $(document).ready(function () {
+            $('#filterForm').on('submit', function (e) {
+                e.preventDefault();
+                const clientId = $('#clientSelect').val();
+                if (clientId === 'all') return;
+                $.ajax({
+                    url: '/admin/get-client-report',
+                    type: 'GET',
+                    data: { client: clientId },
+                    success: function (res) {
+                        if (res.success && res.data.client) {
+                            $('#reportSection').show();
+                            renderReport(res.data);
+                        }
+                    }
+                });
+            });
+
+            function renderReport(data) {
+                // Client Info
+                $('#clientNameText').text(data.client.name);
+                $('#clientEmailText').text(data.client.email_id || '-');
+                $('#clientMobileText').text(data.client.mobile_no || '-');
+
+                // Companies Table
+                const coBody = $('#companyTable tbody');
+                coBody.empty();
+                if (data.companies.length === 0) {
+                    coBody.append(`<tr><td colspan="3" class="text-center">No companies found</td></tr>`);
+                } else {
+                    data.companies.forEach(company => {
+                        coBody.append(`
+                            <tr>
+                                <td>${company.company_name}</td>
+                                <td>${company.legal_name}</td>
+                                <td>${new Date(company.created_at).toLocaleDateString()}</td>
+                            </tr>`);
+                    });
+                }
+
+                // Branches Table
+                const brBody = $('#branchTable tbody');
+                brBody.empty();
+                if (data.branches.length === 0) {
+                    brBody.append(`<tr><td colspan="5" class="text-center">No branches found</td></tr>`);
+                } else {
+                    data.branches.forEach(branch => {
+                        const loc = (branch.city || branch.state) ? (branch.city + ', ' + branch.state) : '-';
+                        const gstPin = (branch.gst_no || branch.pin_code) ? (branch.gst_no + ' / ' + branch.pin_code) : '-';
+                        brBody.append(`
+                            <tr>
+                                <td>${branch.branch_name}</td>
+                                <td>${branch.company_id?.company_name || '-'}</td>
+                                <td>${loc}</td>
+                                <td>${gstPin}</td>
+                                <td>${new Date(branch.created_at).toLocaleDateString()}</td>
+                            </tr>`);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

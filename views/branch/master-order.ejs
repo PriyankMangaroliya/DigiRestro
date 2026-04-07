@@ -1,0 +1,530 @@
+<script>
+    const publicVariables = {};
+</script>
+
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Branch - Food Order</title>
+    <style>
+        .box {
+            width: 100%;
+            height: 55px;
+            text-align: center;
+            outline-style: dotted;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<%- include("sidebar.ejs") %>
+<main class="main-content">
+    <div class="position-relative">
+        <%- include("nav.ejs") %>
+    </div>
+    <div class="content-inner mt-5 py-0">
+        <div class="row">
+            <div class="col-12 col-lg-2">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <label>
+                            <select id="category" class="card-title form-select fw-bolder heading-title"
+                                    onchange="getSubcategories(this.value)">
+                                <% categories.forEach((category, index) => { %>
+                                    <option value="<%= category._id %>" <%= index === 0 ? 'selected' : '' %>><%= category.category_name %></option>
+                                <% }); %>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="card-body py-0">
+                        <ul class="list-inline" id="subcategory">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-3">
+                <div class="card">
+                    <div class="card-header"
+                         style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 class="card-title list-main" style="margin: 0;">Starters</h4>
+                        <input type="text" placeholder="Search" class="form-control" style="width: 40%;"
+                               name="search" id="search">
+                    </div>
+                    <div class="card-body pt-1 mt-1">
+                        <div class="row" id="foodItemsList">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title list-main" style="margin: 0;">Sub Menu</h5>
+                    </div>
+                    <div class="card-body pt-1 mt-1">
+                        <!--                        <div class="col-12 mb-4">-->
+                        <!--                            <div class="box bg-soft-warning">-->
+                        <!--                                <h6>Pizza sdjvbsivbevbsddkvbsei weuf ervhww g9 fhwgt u</h6>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="row" id="foodDetails">
+
+
+                            <!--                            <div class="col-12 mb-4">-->
+                            <!--                                <div class="box bg-soft-warning">-->
+                            <!--                                    <h6>Pizza</h6>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+
+                            <!--                            <div class="col-12 mb-4">-->
+                            <!--                                <div class="box bg-soft-warning">-->
+                            <!--                                    <h6>Pizza</h6>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+                            <!--                            <div class="col-12 mb-4">-->
+                            <!--                                <div class="box bg-soft-warning">-->
+                            <!--                                    <h6>Pizza</h6>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+                            <!--                            <div class="col-12 mb-4">-->
+                            <!--                                <div class="box bg-soft-warning">-->
+                            <!--                                    <h6>Pizza</h6>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-12 col-lg-5">
+                <div class="card table-responsive border border-danger w-100">
+                    <form id="orderForm">
+
+                        <table class="table table-borderless product-table rounded">
+                            <thead class="bg-primary">
+                            <tr>
+                                <th><span class="heading-title rowpad text-white">Items</span></th>
+                                <th><span class="heading-title rowpad text-white">Price</span></th>
+                                <th><span class="heading-title rowpad text-white">Quantity</span></th>
+                                <th><span class="heading-title rowpad text-white">Total</span></th>
+                                <th><span class="heading-title rowpad text-white">Action</span></th>
+                                <th><span class="heading-title rowpad text-white">Remove</span></th>
+                            </tr>
+                            </thead>
+                            <tbody id="orderTableBody" style="font-size: 16px;" class="fw-bolder">
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="3">
+                                    <button type="button" onclick="submitForm(2)"
+                                            class="btn btn-sm mb-1 btn-primary">KOT
+                                    </button>
+                                    <button type="button" onclick="submitForm(2)"
+                                            class="btn btn-sm mb-1 btn-primary">KOT & Print
+                                    </button>
+                                    <!--                                    <button type="button" onclick="submitForm(4)"-->
+                                    <!--                                            class="btn btn-sm mb-1 btn-primary">Completed-->
+                                    <!--                                    </button>-->
+                                </td>
+                                <td colspan="3" style="font-size: 16px;" class="fw-bolder"><span
+                                            id="totalAmount">₹ 0.00</span></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script>
+    async function fetchFoodItems(subcategoryId) {
+        try {
+            let isFirstTime = true;
+
+            const response = await fetch(`/food-items/${subcategoryId}`);
+            const foodItems = await response.json();
+            const foodItemsList = document.getElementById('foodItemsList');
+            foodItemsList.innerHTML = '';
+
+            if (isFirstTime) {
+                const foodItemId = foodItems[0]._id;
+                fetchAndDisplayFoodDetails(foodItemId);
+                isFirstTime = false;
+            }
+
+            foodItems.forEach(foodItem => {
+                const itemHTML = `
+                 <div class="col-sm-6 col-md-6 col-lg-6 mt-3 mb-3 mt-md-0">
+                    <div class="box p-3 shadow-showcase text-center bg-soft-success" data-id="${foodItem.id}">
+                        <a class="food-item-link" data-id="${foodItem._id}"><h6>${foodItem.item_name}</h6></a>
+                    </div>
+                </div>`;
+                foodItemsList.insertAdjacentHTML('beforeend', itemHTML);
+            });
+
+            const foodItemLinks = document.querySelectorAll('.food-item-link');
+            foodItemLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent the default action of the anchor tag
+                    const foodItemId = link.dataset.id;
+                    fetchAndDisplayFoodDetails(foodItemId);
+                });
+            });
+        } catch (error) {
+            console.error("Error fetching food items:", error);
+        }
+    }
+
+    function submitForm(buttonValue) {
+        const formData = [];
+        let totalPrice = 0;
+
+        // Fetch data from orderTableBody
+        const orderTableBody = document.getElementById('orderTableBody');
+        const itemData = fetchTableBodyData(orderTableBody);
+
+        // Calculate total price
+        for (const item of itemData) {
+            totalPrice += item.total;
+        }
+
+        // Construct formData
+        const tableId = '<%= table_id %>';
+        formData.push({
+            orderID: publicVariables.orderId,
+            table_id: tableId,
+            items: itemData,
+            total_price: totalPrice,
+            statusCode: buttonValue,
+        });
+
+        // Check if items are present
+        if (formData.length === 0 || itemData.length === 0) {
+            iziToast.info({
+                title: 'Info',
+                message: 'Please add items to the order.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        // Check payment mode for completion or printing
+        if (buttonValue === 4 || buttonValue === 3) {
+            const paymentMode = document.querySelector('input[name="flexRadioDefault"]:checked');
+            if (!paymentMode) {
+                iziToast.info({
+                    title: 'Info',
+                    message: 'Please select a payment mode.',
+                    position: 'topRight'
+                });
+                return;
+            }
+            formData[0].paymentMode = paymentMode.value;
+        }
+
+        // formData[0].mobile_no =
+        // Perform AJAX request
+        console.log(formData);
+        $.ajax({
+            url: "/branch/add-order",
+            type: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function (res) {
+                if (res.success) {
+                    window.location.href = "/branch/assign-table";
+                } else {
+                    iziToast.error({
+                        title: 'Error',
+                        message: res.msg || 'Failed to add order.',
+                        position: 'topRight'
+                    });
+                }
+            },
+            error: function() {
+                iziToast.error({
+                    title: 'Error',
+                    message: 'An error occurred while adding the order.',
+                    position: 'topRight'
+                });
+            }
+        });
+    }
+
+
+    // Function to fetch data from a table body
+    function fetchTableBodyData(tableBody) {
+        const itemData = [];
+        for (let i = 0; i < tableBody.rows.length; i++) {
+            const row = tableBody.rows[i];
+            if (row.classList.contains('timing-row')) {
+                continue;
+            }
+            const itemName = row.cells[0].textContent.trim();
+            const priceText = row.cells[1] ? row.cells[1].textContent.trim() : '';
+            const price = parseFloat(priceText.replace('₹', ''));
+            const quantityText = row.cells[2] ? row.cells[2].textContent.trim() : '';
+            const quantity = parseInt(quantityText, 10);
+
+            if (isNaN(quantity)) {
+                console.error('Quantity is not a number:', quantityText);
+                continue; // Skip this row if quantity is not a valid number
+            }
+
+            const total = price * quantity; // Calculate total for the current item
+            const food_sub_item_id = row.dataset.foodId;
+            itemData.push({food_sub_item_id, itemName, price, quantity, total});
+        }
+        return itemData;
+    }
+
+
+    async function fetchAndDisplayFoodDetails(foodItemId) {
+        try {
+            // console.log(foodItemId)
+            const response = await fetch(`/food-details/${foodItemId}`);
+            const foodSubItems = await response.json();
+            const foodDetailsList = document.getElementById('foodDetails');
+            foodDetailsList.innerHTML = '';
+
+            // console.log(foodSubItems)
+
+            foodSubItems.forEach(foodSubItems => {
+                const detailsHTML = `
+   <a class="food-sub-item-link" data-id="${foodSubItems._id}">
+<div class="col-12 mb-4">
+ <div class="box bg-soft-warning">
+                            <div style="margin-top: 12px;">
+                                <h5>${foodSubItems.sub_item_name}</h5>
+                                <p>Price: ${foodSubItems.price}</p>
+                            </div>
+                    </div>
+</div>
+</a>`;
+                foodDetailsList.insertAdjacentHTML('beforeend', detailsHTML);
+            });
+
+
+            const foodSubItemLinks = document.querySelectorAll('.food-sub-item-link');
+            foodSubItemLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const foodSubItemId = link.dataset.id;
+                    fetchFoodSubItem(foodSubItemId);
+                });
+            });
+        } catch (error) {
+            console.error("Error fetching food details:", error);
+        }
+    }
+
+    async function fetchFoodSubItem(foodItemId) {
+        try {
+            // console.log(foodItemId);
+            const response = await fetch(`/food-sub-item/${foodItemId}`);
+            const foodSubItems = await response.json();
+
+            const orderTableBody = document.getElementById('orderTableBody');
+
+            // console.log(foodSubItems)
+            foodSubItems.forEach(subItem => {
+                // Check if the sub-item already exists in the table
+                let existingRow = null;
+                for (let i = 0; i < orderTableBody.rows.length; i++) {
+                    const row = orderTableBody.rows[i];
+                    if (row.dataset.foodId === subItem._id) {
+                        existingRow = row;
+                        break;
+                    }
+                }
+
+                if (existingRow) {
+                    const quantityCell = existingRow.querySelector('.quantity');
+                    console.log('Quantity Cell:', quantityCell); // Check if quantityCell is null
+                    let quantity = parseInt(quantityCell.textContent) || 0;
+                    quantity++;
+                    quantityCell.textContent = quantity;
+
+                    const totalCell = existingRow.querySelector('.total');
+                    console.log('Total Cell:', totalCell);
+                    if (totalCell) {
+                        const price = parseFloat(subItem.price);
+                        totalCell.textContent = `₹ ${(quantity * price).toFixed(2)}`;
+                    }
+                } else {
+                    // If the sub-item doesn't exist, insert a new row
+                    const newRow = orderTableBody.insertRow();
+                    newRow.dataset.foodId = subItem._id; // Set the dataset to identify the sub-item
+                    // subItemIdInput.value = subItem._id;
+
+                    // Insert cells for sub-item name, price, quantity, and total
+                    const nameCell = newRow.insertCell(0);
+                    const priceCell = newRow.insertCell(1);
+                    const quantityCell = newRow.insertCell(2);
+                    const totalCell = newRow.insertCell(3);
+                    const actionCell = newRow.insertCell(4);
+                    const removeCell = newRow.insertCell(5);
+
+                    nameCell.textContent = `${subItem.food_item_id.item_name}(${subItem.sub_item_name})`;
+                    priceCell.textContent = `₹ ${subItem.price.toFixed(2)}`;
+                    quantityCell.textContent = '1';
+                    quantityCell.classList.add('quantity');
+                    totalCell.classList.add('total');
+                    totalCell.textContent = `₹ ${subItem.price.toFixed(2)}`;
+
+                    // Add buttons for incrementing and decrementing quantity
+                    const incrementBtn = document.createElement('h4');
+                    incrementBtn.classList.add('btn', 'btn-sm', 'btn-outline-primary', 'increment-btn');
+                    const incrementText = document.createElement('span');
+                    incrementText.textContent = '+';
+                    incrementBtn.appendChild(incrementText);
+                    incrementBtn.addEventListener('click', function () {
+                        incrementQuantity(quantityCell, totalCell, subItem.price);
+                    });
+                    actionCell.appendChild(incrementBtn);
+
+                    const decrementBtn = document.createElement('h4');
+                    decrementBtn.textContent = '-';
+                    decrementBtn.classList.add('btn', 'btn-sm', 'btn-outline-primary','decrement-btn');
+                    decrementBtn.addEventListener('click', function () {
+                        decrementQuantity(quantityCell, totalCell, subItem.price);
+                    });
+                    actionCell.appendChild(decrementBtn);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'remove-btn');
+                    removeBtn.addEventListener('click', function () {
+                        newRow.remove(); // Remove the row when remove button is clicked
+                        calculateTotalAmount(); // Recalculate total amount after removing item
+                    });
+                    removeCell.appendChild(removeBtn);
+                }
+            });
+
+            calculateTotalAmount();
+        } catch (error) {
+            console.error("Error fetching food sub details:", error);
+        }
+    }
+
+
+    function incrementQuantity(quantityCell, totalCell, price) {
+        let quantity = parseInt(quantityCell.textContent) || 0;
+        quantity++;
+        quantityCell.textContent = quantity;
+        totalCell.textContent = `₹ ${(quantity * price).toFixed(2)}`;
+        calculateTotalAmount();
+    }
+
+    function decrementQuantity(quantityCell, totalCell, price) {
+        let quantity = parseInt(quantityCell.textContent) || 0;
+        if (quantity > 1) {
+            quantity--;
+            quantityCell.textContent = quantity;
+            totalCell.textContent = `₹ ${(quantity * price).toFixed(2)}`;
+        }
+        calculateTotalAmount();
+    }
+
+    function calculateTotalAmount() {
+        let totalAmount = 0;
+
+        // Loop through orderTableBody
+        const orderTableBody = document.getElementById('orderTableBody');
+        for (let i = 0; i < orderTableBody.rows.length; i++) {
+            const row = orderTableBody.rows[i];
+            if (row.classList.contains('timing-row')) {
+                continue;
+            }
+            const totalCell = row.cells[3];
+            if (totalCell && totalCell.textContent) {
+                totalAmount += parseFloat(totalCell.textContent.replace('₹', ''));
+            }
+        }
+
+        // Set the total amount in the DOM
+        document.getElementById('totalAmount').textContent = `₹ ${totalAmount.toFixed(2)}`;
+    }
+
+
+    async function getSubcategories(categoryId) {
+        try {
+            let isFirstTime = true;
+
+            const response = await fetch(`/food-subcategories/${categoryId}`);
+            const subcategories = await response.json();
+            const subcategoryList = document.getElementById('subcategory');
+            subcategoryList.innerHTML = '';
+
+            if (isFirstTime) {
+                const subcategoryId = subcategories[0]._id;
+                fetchFoodItems(subcategoryId);
+                isFirstTime = false;
+            }
+
+            subcategories.forEach(subcategory => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('py-2', 'd-flex', 'justify-content-between');
+                listItem.onclick = () => fetchFoodItems(subcategory._id);
+
+                const link = document.createElement('a');
+                link.setAttribute('href', '#');
+
+                const span = document.createElement('span');
+                span.classList.add('fw-bolder', 'heading-title', 'text-dark');
+                span.textContent = subcategory.sub_category_name;
+
+                link.appendChild(span);
+                listItem.appendChild(link);
+                subcategoryList.appendChild(listItem);
+            });
+        } catch (error) {
+            console.error("Error fetching subcategories:", error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const defaultCategoryId = document.getElementById('category').value;
+        getSubcategories(defaultCategoryId);
+
+        const orderTableBody = document.getElementById('orderTableBody');
+
+        orderTableBody.addEventListener('click', function (event) {
+            const target = event.target;
+            if (target.classList.contains('increment-btn')) {
+                incrementQuantity(target);
+            } else if (target.classList.contains('decrement-btn')) {
+                decrementQuantity(target);
+            }
+        });
+
+
+        const orderId = '<%- order_id %>';
+        if (orderId === 'null') {
+            publicVariables.orderId = null
+        } else {
+            console.log('<%- order_id %>')
+            publicVariables.orderId = '<%- order_id %>';
+        }
+
+    });
+
+</script>
+
+<%- include("links.ejs") %>
+
+</body>
+</html>

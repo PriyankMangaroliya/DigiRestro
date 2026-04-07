@@ -1,0 +1,307 @@
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+
+<!-- General CSS Files -->
+<link rel="stylesheet" href="assets/css/app.min.css">
+<link rel="stylesheet" href="assets/bundles/datatables/datatables.min.css">
+<link rel="stylesheet" href="assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="assets/bundles/bootstrap-social/bootstrap-social.css">
+<!-- Template CSS -->
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<!-- Custom style CSS -->
+<link rel="stylesheet" href="assets/css/custom.css">
+<link rel="stylesheet" href="assets/bundles/izitoast/css/iziToast.min.css">
+
+
+<link rel='shortcut icon' type='image/x-icon' href='assets/img/favicon.ico'/>
+<!--<div class="loader"></div>-->
+
+
+<!-- nav -->
+<div class="navbar-bg"></div>
+<script src="assets/bundles/izitoast/js/iziToast.min.js"></script>
+<script>
+    window.addEventListener('load', function() {
+        <% if (session.successMessage) { %>
+            iziToast.success({
+                title: 'Success',
+                message: '<%= session.successMessage %>',
+                position: 'topRight'
+            });
+            <% session.successMessage = null; %>
+        <% } %>
+        <% if (session.errorMessage) { %>
+            iziToast.error({
+                title: 'Error',
+                message: '<%= session.errorMessage %>',
+                position: 'topRight'
+            });
+            <% session.errorMessage = null; %>
+        <% } %>
+    });
+</script>
+<script>
+    // $(function () {
+    var userName="";
+    window.onload = function() {
+        var URL  = "/company/fetchUserName";
+        $.ajax({
+            url: URL,
+            type:"GET",
+            dataType:"json",
+            success: function (res) {
+                userName = JSON.stringify(res.userName);
+                document.getElementById("helloText").innerText = 'Hello ' + JSON.parse(userName);
+                if (res.userImage) {
+                    document.getElementById("profileImg").src = res.userImage;
+                    document.getElementById("profileImg").style.display = "inline-block";
+                    document.getElementById("profileIcon").style.display = "none";
+                } else {
+                    document.getElementById("profileImg").style.display = "none";
+                    document.getElementById("profileIcon").style.display = "inline-flex";
+                    document.getElementById("profileIcon").innerText = res.userInitial;
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error is: ", error);
+            }
+        })
+    }
+    // });
+</script>
+<nav class="navbar navbar-expand-lg main-navbar sticky">
+    <div class="form-inline mr-auto">
+        <ul class="navbar-nav mr-3">
+            <li>
+                <a href="#" data-toggle="sidebar" class="mt-2 nav-link nav-link-lg
+									collapse-btn"> <i data-feather="align-justify"></i></a>
+            </li>
+            <li>
+                <a href="#" class="mt-2 nav-link nav-link-lg fullscreen-btn">
+                    <i data-feather="maximize"></i>
+                </a>
+            </li>
+            <li>
+                <form class="form-inline mr-auto">
+                    <div class="nav-link nav-link-lg collapse-btn">
+                        <select class="form-control border-light" id="companySelect">
+                            <% for (let i = 0; i < data.companies.length; i++) { %>
+                                <option value="<%= data.companies[i]._id %>"><%= data.companies[i].company_name %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var selectedCompanyId = "<%= companyId %>";
+            var selectedLegalName = "<%= selectedLegalName %>";
+            var selectedCompanyLogo = "<%= selectedCompanyLogo %>";
+            var selectedCompany = {};  // Default empty object
+ 
+            // console.log(selectedCompanyLogo);
+            $('#companySelect').change(function () {
+                selectedCompanyId = $(this).val();
+ 
+                $.ajax({
+                    url: '/storeSelectedCompany',
+                    method: 'POST',
+                    data: {companyId: selectedCompanyId},
+                    success: function (response) {
+                        console.log('Selected company stored in the session');
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error storing selected company:', error);
+                    }
+                });
+            });
+ 
+            $('#companySelect option[value="' + selectedCompanyId + '"]').prop('selected', true);
+ 
+            // Assuming that 'selectedCompany' is available in the server response
+            // If not, it will use the default empty object
+            // var companyLogo = "<%= selectedLegalName %>" || 'assets/img/logo.png';
+            // var companyName = selectedCompany.legalName || 'Company';
+ 
+            $('#companyLogo').attr('src', selectedCompanyLogo);
+            $('#companyName').text(selectedLegalName);
+        });
+    </script>
+ 
+    <ul class="navbar-nav navbar-right">
+        <!--        <li class="dropdown">-->
+        <!--            <a href="master-company.php" class="nav-link dropdown-toggle nav-link-lg nav-link-user bg-primary">-->
+        <!--                <i class="fas fa-hotel"></i></a>-->
+        <!--        </li>-->
+        <!--        &nbsp;-->
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                <img alt="image" src="assets/img/users/user-8.png" id="profileImg" class="user-img-radious-style">
+                <span id="profileIcon" class="user-img-radious-style bg-primary text-white align-items-center justify-content-center" 
+                      style="width: 30px; height: 30px; display: none; font-weight: bold; text-transform: uppercase; border-radius: 50%;"></span>
+                <span class="d-sm-none d-lg-inline-block"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right pullDown">
+                <div class="dropdown-title"  id="helloText"></div>
+                <a href="/company/profile" class="dropdown-item has-icon">
+                    <i class="far fa-user"></i> Profile
+                </a>
+                <a href="/company/manage-company" class="dropdown-item has-icon">
+                    <i class="fas fa-hotel"></i> Company
+                </a>
+                <a href="javascript:void(0)" class="dropdown-item has-icon settingbtn">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="/logout" class="dropdown-item has-icon text-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<!-- sidebar -->
+<div class="main-sidebar sidebar-style-2">
+    <aside id="sidebar-wrapper">
+        <div class="sidebar-brand">
+            <a href="/company/dashboard">
+                <img alt="image" id="companyLogo" src="" class="header-logo"/>
+                <span id="companyName" class="logo-name" style="font-size: small;">Company</span>
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="dropdown">
+                <a href="/company/dashboard" class="nav-link"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
+            </li>
+
+            <li class="dropdown">
+                <a href="/company/manage-branch" class="nav-link"><i class="fas fa-store"></i><span>Manage Branch</span></a>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                            class="fas fa-th-list"></i><span>Manage Food</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="/company/manage-category">Category</a></li>
+                    <li><a class="nav-link" href="/company/manage-sub-category">Sub Category</a></li>
+                    <li><a class="nav-link" href="/company/manage-food">Food Item</a></li>
+                </ul>
+            </li>
+
+<!--            <li class="dropdown">-->
+<!--                <a href="/company/manage-order" class="nav-link"><i class="fas fa-store"></i><span>View Orders</span></a>-->
+<!--            </li>-->
+
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                            class="fas fa-chart-bar"></i><span>Reports</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="nav-link" href="/company/manage-order">View Orders</a></li>
+                    <li><a class="nav-link" href="/company/revenue-report">Revenue Report</a></li>
+                    <li><a class="nav-link" href="/company/item-revenue-report">Item Sales Report</a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+</div>
+
+
+<div class="settingSidebar settingSidebar0 setting">
+    <!--    <a href="javascript:void(0)" class="settingPanelToggle settingbtn"> <i class="fa fa-spin fa-cog"></i></a>-->
+    <div class="settingSidebar-body ps-container ps-theme-default">
+        <div class=" fade show active">
+            <div class="setting-panel-header">Setting Panel</div>
+            <div class="p-15 border-bottom">
+                <h6 class="font-medium m-b-10">Select Layout</h6>
+                <div class="selectgroup layout-color w-50">
+                    <label class="selectgroup-item">
+                        <input type="radio" name="value" value="1"
+                               class="selectgroup-input-radio select-layout" checked>
+                        <span class="selectgroup-button">Light</span>
+                    </label>
+                    <label class="selectgroup-item">
+                        <input type="radio" name="value" value="2"
+                               class="selectgroup-input-radio select-layout">
+                        <span class="selectgroup-button">Dark</span>
+                    </label>
+                </div>
+            </div>
+            <div class="p-15 border-bottom">
+                <h6 class="font-medium m-b-10">Sidebar Color</h6>
+                <div class="selectgroup selectgroup-pills sidebar-color">
+                    <label class="selectgroup-item">
+                        <input type="radio" name="icon-input" value="1"
+                               class="selectgroup-input select-sidebar">
+                        <span class="selectgroup-button selectgroup-button-icon" data-toggle="tooltip"
+                              data-original-title="Light Sidebar"><i class="fas fa-sun"></i></span>
+                    </label>
+                    <label class="selectgroup-item">
+                        <input type="radio" name="icon-input" value="2"
+                               class="selectgroup-input select-sidebar" checked>
+                        <span class="selectgroup-button selectgroup-button-icon" data-toggle="tooltip"
+                              data-original-title="Dark Sidebar"><i class="fas fa-moon"></i></span>
+                    </label>
+                </div>
+            </div>
+            <div class="p-15 border-bottom">
+                <h6 class="font-medium m-b-10">Color Theme</h6>
+                <div class="theme-setting-options">
+                    <ul class="choose-theme list-unstyled mb-0">
+                        <li title="white" class="active">
+                            <div class="white"></div>
+                        </li>
+                        <li title="cyan">
+                            <div class="cyan"></div>
+                        </li>
+                        <li title="black">
+                            <div class="black"></div>
+                        </li>
+                        <li title="purple">
+                            <div class="purple"></div>
+                        </li>
+                        <li title="orange">
+                            <div class="orange"></div>
+                        </li>
+                        <li title="green">
+                            <div class="green"></div>
+                        </li>
+                        <li title="red">
+                            <div class="red"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-15 border-bottom">
+                <div class="theme-setting-options">
+                    <label class="m-b-0">
+                        <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input"
+                               id="mini_sidebar_setting">
+                        <span class="custom-switch-indicator"></span>
+                        <span class="control-label p-l-10">Mini Sidebar</span>
+                    </label>
+                </div>
+            </div>
+            <div class="p-15 border-bottom">
+                <div class="theme-setting-options">
+                    <label class="m-b-0">
+                        <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input"
+                               id="sticky_header_setting">
+                        <span class="custom-switch-indicator"></span>
+                        <span class="control-label p-l-10">Sticky Header</span>
+                    </label>
+                </div>
+            </div>
+            <div class="mt-4 mb-4 p-3 align-center rt-sidebar-last-ele">
+                <a href="#" class="btn btn-icon icon-left btn-primary btn-restore-theme">
+                    <i class="fas fa-undo"></i> Restore Default
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digirestro - Company</title>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+
+        <%- include("nav-sidebar.ejs", { data: { companies: formattedCompanies } }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Food Sub Category</h4>
+                                    <div class="buttons">
+                                        <a href="javascript:void(0)" class="settingPanelToggle btn btn-primary addbtn">Add
+                                            Sub
+                                            Category</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover" id="table-1" style="width:100%;">
+                                            <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Sub Category Name</th>
+                                                <th>Category Name</th>
+                                                <th>Total Food</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% if (foodSubCategories.length > 0) { %>
+                                                <% for (let i = 0; i < foodSubCategories.length; i++) { %>
+                                                    <tr>
+                                                        <td><%= i + 1 %></td>
+                                                        <td><%= foodSubCategories[i].sub_category_name %></td>
+                                                        <td><%= foodSubCategories[i].category_name %></td>
+                                                        <td><%= foodSubCategories[i].totalFood %></td>
+                                                        <td>
+                                                            <% if(foodSubCategories[i].is_active == true){ %>
+                                                                <a href="/company/sub-category-activeAndDeactive?id=<%= foodSubCategories[i]._id %>&value=true"
+                                                                   class="badge badge-success badge-shadow">Active</a>
+                                                            <% }else { %>
+                                                                <a href="/company/sub-category-activeAndDeactive?id=<%= foodSubCategories[i]._id %>&value=false"
+                                                                   class="badge badge-danger badge-shadow">Deactive</a>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               class="settingPanelToggle updatebtn btn btn-primary"
+                                                               onclick="updateSubCategoryData('<%= foodSubCategories[i]._id %>', '<%= foodSubCategories[i].sub_category_name %>', '<%= foodSubCategories[i].food_category_id %>')">
+                                                                <i class="fas fa-edit"></i></a>
+
+                                                            <a class="btn btn-danger" href="#"
+                                                               data-sub-category-id="<%= foodSubCategories[i]._id %>"
+                                                               onclick="Aredelete(this)"><i class="fas fa-trash"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                <% } %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="6" class="text-center">No sub-categories found.</td>
+                                                </tr>
+                                            <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <% if(foodCategories.length === 0){ %>
+                <div class="settingSidebar settingSidebar1 add">
+                    <div class="fade show active">
+                        <div class="setting-panel-header">Sub Category</div>
+                        <div class="card m-4 pb-4 pt-4">
+                            <center>
+                                <h5>Please enter food categories</h5>
+                                <a href="/company/manage-category" class="btn btn-primary">Add categories</a>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+
+            <% }else { %>
+                <div class="settingSidebar settingSidebar1 add">
+                    <div class="fade show active">
+                        <div class="setting-panel-header">Sub Category</div>
+                        <div class="card m-4">
+                            <form class="needs-validation" novalidate="" action="/company/add-sub-category"
+                                  method="post">
+                                <div class="card-header">
+                                    <h4>Add Sub Category</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Sub Category Name</label>
+                                        <input type="text" class="form-control" name="sub_category_name"
+                                               placeholder="Category Name" required="">
+                                        <div class="invalid-feedback">
+                                            What's Sub Category Name?
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Category</label>
+                                        <select class="form-control" required name="food_category_id">
+                                            <% for (let i = 0; i < foodCategories.length; i++) { %>
+                                                <option value="<%= foodCategories[i]._id %>"><%= foodCategories[i].category_name %></option>
+                                            <% } %>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            What's Category?
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <input type="submit" class="btn btn-primary" id="add"
+                                           value="Add Sub Category">
+
+                                    <a href="javascript:void(0)"
+                                       class="addbtn btn btn-icon icon-left btn-primary btn-restore-theme">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            <% } %>
+
+            <div class="settingSidebar settingSidebar1 update">
+                <div class="fade show active">
+                    <div class="setting-panel-header">Sub Category</div>
+                    <div class="card m-4">
+                        <form class="needs-validation" novalidate="" action="/company/update-sub-category"
+                              method="post">
+                            <div class="card-header">
+                                <h4>Update Sub Category</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Sub Category Name</label>
+                                    <input type="text" class="form-control" name="sub_category_name"
+                                           id="sub_category_name"
+                                           placeholder="Category Name" required="">
+                                    <div class="invalid-feedback">
+                                        What's Sub Category Name?
+                                    </div>
+                                    <input type="hidden" class="form-control" name="food_sub_category_id"
+                                           id="food_sub_category_id">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select class="form-control" required name="food_category_id"
+                                            id="food_category_id_update">
+                                        <% for (let i = 0; i < foodCategories.length; i++) { %>
+                                            <option value="<%= foodCategories[i]._id %>"><%= foodCategories[i].category_name %></option>
+                                        <% } %>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        What's Category?
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <input type="submit" class="btn btn-primary" id="update"
+                                       value="Update Sub Category">
+
+                                <a href="javascript:void(0)"
+                                   class="updatebtn btn btn-icon icon-left btn-primary btn-restore-theme">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateSubCategoryData(id, subCategoryName, foodCategoryId) {
+        document.getElementById('sub_category_name').value = subCategoryName;
+        document.getElementById('food_sub_category_id').value = id;
+        // document.getElementById('food_category_id').value = foodCategoryId;
+        updateFoodCategorySelect(foodCategoryId);
+        // console.log(foodCategoryId)
+    }
+
+    function updateFoodCategorySelect(selectedCategoryId) {
+        const selectElement = document.getElementById('food_category_id_update');
+
+        for (let i = 0; i < selectElement.options.length; i++) {
+            const option = selectElement.options[i];
+            if (option.value === selectedCategoryId) {
+                option.selected = true;
+                break;
+            }
+        }
+    }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function Aredelete(element) {
+        const subCategoryId = element.getAttribute('data-sub-category-id');
+
+        // console.log(subCategoryId)
+        // console.log("/company/delete-sub-category?id=" + subCategoryId)
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/company/delete-sub-category?id=" + subCategoryId,
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = "/company/manage-sub-category";
+                        } else {
+                            iziToast.error({
+                                title: 'Error',
+                                message: response.message || 'Failed to delete the record.',
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Failed to delete the record.',
+                            position: 'topRight'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<!-- General JS Scripts -->
+<script src="assets/js/app.min.js"></script>
+<!-- JS Libraies -->
+<script src="assets/bundles/datatables/datatables.min.js"></script>
+<script src="assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+<!-- Page Specific JS File -->
+<script src="assets/js/page/datatables.js"></script>
+<!-- Template JS File -->
+<script src="assets/js/scripts.js"></script>
+<!-- Custom JS File -->
+<script src="assets/js/custom.js"></script>
+
+</body>
+</html>

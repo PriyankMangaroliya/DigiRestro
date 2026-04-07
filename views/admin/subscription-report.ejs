@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Subscription Report | Admin</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="../admin/assets/css/app.min.css" />
+    <link rel="stylesheet" href="../admin/assets/css/style.css" />
+    <link rel="stylesheet" href="../admin/assets/css/components.css" />
+    <link rel="stylesheet" href="../admin/assets/css/custom.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper main-wrapper-1">
+            <%- include("nav-sidebar.ejs") %>
+            <div class="main-content">
+                <section class="section">
+                    <div class="section-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Subscription Report Filters</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="filterForm">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Duration</label>
+                                                        <select class="form-control" name="duration" id="durationSelect">
+                                                            <option value="all">All Time</option>
+                                                            <option value="day">Today</option>
+                                                            <option value="month">Current Month</option>
+                                                            <option value="year">Current Year</option>
+                                                            <option value="custom">Custom Range</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div id="customDateRange" class="col-md-4 row" style="display: none;">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Start Date</label>
+                                                            <input type="date" class="form-control" name="startDate">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>End Date</label>
+                                                            <input type="date" class="form-control" name="endDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Select Client</label>
+                                                        <select class="form-control" name="client" id="clientSelect">
+                                                            <option value="all">All Clients</option>
+                                                            <% clients.forEach(c => { %>
+                                                                <option value="<%= c._id %>"><%= c.name %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Select Company</label>
+                                                        <select class="form-control" name="company" id="companySelect">
+                                                            <option value="all">All Companies</option>
+                                                            <% companies.forEach(c => { %>
+                                                                <option value="<%= c._id %>" data-user="<%= c.user_id %>"><%= c.company_name %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Select Branch</label>
+                                                        <select class="form-control" name="branch" id="branchSelect">
+                                                            <option value="all">All Branches</option>
+                                                            <% branches.forEach(b => { %>
+                                                                <option value="<%= b._id %>" data-user="<%= b.user_id %>" data-company="<%= b.company_id %>"><%= b.branch_name %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                                <button type="reset" class="btn btn-secondary">Reset</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4>Subscription Data</h4>
+                                        <div class="card-header-action">
+                                            <button onclick="exportToExcel('subscriptionTable', 'SubscriptionReport')" class="btn btn-lg btn-success mx-1">
+                                                <i class="fas fa-file-excel"></i> Excel
+                                            </button>
+                                            <button onclick="exportToPDF('subscriptionTable', 'Subscription Report')" class="btn btn-lg btn-danger mx-1">
+                                                <i class="fas fa-file-pdf"></i> PDF
+                                            </button>
+                                            <button onclick="window.print()" class="btn btn-lg btn-info mx-1">
+                                                <i class="fas fa-print"></i> Print
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover" id="subscriptionTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Client</th>
+                                                        <th>Company</th>
+                                                        <th>Branch</th>
+                                                        <th>Plan</th>
+                                                        <th>Price</th>
+                                                        <th>Duration</th>
+                                                        <th>Start Date</th>
+                                                        <th>End Date</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Data populated manually -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Libraies -->
+    <script src="../admin/assets/js/app.min.js"></script>
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // Export Functions
+        async function exportToExcel(tableId, title) {
+            const table = document.getElementById(tableId);
+            const wb = XLSX.utils.table_to_book(table);
+            XLSX.writeFile(wb, `${title}.xlsx`);
+        }
+
+        async function exportToPDF(tableId, title) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text(title, 14, 15);
+            doc.autoTable({ html: `#${tableId}`, startY: 20 });
+            doc.save(`${title}.pdf`);
+        }
+
+        $(document).ready(function () {
+            $('#durationSelect').on('change', function () {
+                if ($(this).val() === 'custom') {
+                    $('#customDateRange').show();
+                } else {
+                    $('#customDateRange').hide();
+                }
+            });
+
+            // Cascading Filtering logic
+            $('#clientSelect').on('change', function () {
+                const clientId = $(this).val();
+                $('#companySelect').val('all');
+                $('#branchSelect').val('all');
+                if (clientId === 'all') {
+                    $('#companySelect option').show();
+                    $('#branchSelect option').show();
+                } else {
+                    $('#companySelect option[value!="all"]').hide();
+                    $('#companySelect option[data-user="' + clientId + '"]').show();
+                    $('#branchSelect option[value!="all"]').hide();
+                    $('#branchSelect option[data-user="' + clientId + '"]').show();
+                }
+            });
+
+            $('#companySelect').on('change', function () {
+                const companyId = $(this).val();
+                const clientId = $('#clientSelect').val();
+                $('#branchSelect').val('all');
+                if (companyId === 'all') {
+                    if (clientId === 'all') {
+                        $('#branchSelect option').show();
+                    } else {
+                        $('#branchSelect option[value!="all"]').hide();
+                        $('#branchSelect option[data-user="' + clientId + '"]').show();
+                    }
+                } else {
+                    $('#branchSelect option[value!="all"]').hide();
+                    $('#branchSelect option[data-company="' + companyId + '"]').show();
+                }
+            });
+
+            $('#filterForm').on('submit', function (e) {
+                e.preventDefault();
+                loadData();
+            });
+
+            function loadData() {
+                const formData = $('#filterForm').serialize();
+                $.ajax({
+                    url: '/admin/get-subscription-report',
+                    type: 'GET',
+                    data: formData,
+                    success: function (res) {
+                        if (res.success) {
+                            renderTable(res.data);
+                        }
+                    }
+                });
+            }
+
+            function renderTable(data) {
+                const tbody = $('#subscriptionTable tbody');
+                tbody.empty();
+                if (data.length === 0) {
+                    tbody.append('<tr><td colspan="9" class="text-center">No data found</td></tr>');
+                    return;
+                }
+                data.forEach(item => {
+                    const badgeClass = item.status === 'Active' ? 'badge-success' : 'badge-danger';
+                    tbody.append(`
+                        <tr>
+                            <td>${item.clientName}</td>
+                            <td>${item.companyName}</td>
+                            <td>${item.branchName}</td>
+                            <td>${item.planName}</td>
+                            <td>${item.price}</td>
+                            <td>${item.duration}</td>
+                            <td>${new Date(item.start_date).toLocaleDateString()}</td>
+                            <td>${new Date(item.end_date).toLocaleDateString()}</td>
+                            <td><span class="badge ${badgeClass}">${item.status}</span></td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Initial load
+            loadData();
+        });
+    </script>
+</body>
+
+</html>
