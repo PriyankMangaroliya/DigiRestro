@@ -3,8 +3,8 @@ const nodemailer = require("nodemailer");
 const emailTransporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "priyankmangaroliya@gmail.com",
-    pass: "wlcmplzlnjkgsgsd",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -58,7 +58,7 @@ module.exports = {
       const htmlContent = useTemplate ? wrapInBaseTemplate(subject, text) : text;
       
       const mailOptions = {
-        from: '"DigiRestro" <priyankmangaroliya@gmail.com>',
+        from: `"DigiRestro" <${process.env.EMAIL_USER}>`,
         to: to,
         subject: subject,
         text: text.replace(/<[^>]*>?/gm, ''), // Plain text version (strips HTML)
