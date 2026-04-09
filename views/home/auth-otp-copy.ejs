@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiRestro - OTP Verification</title>
+    
+    <!-- External Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main-light.css">
+    
+    <!-- JQuery & SweetAlert2 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary-color: #0061f2;
+            --primary-light: #e0e9ff;
+            --secondary-color: #69707a;
+            --bg-gradient: linear-gradient(135deg, #f2f5f9 0%, #ffffff 100%);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: #edf2f9;
+            --text-color: #2d3436;
+            --input-bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            color: var(--text-color);
+        }
+
+        .background-blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-color);
+            filter: blur(150px);
+            opacity: 0.1;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .blob-1 { top: -100px; left: -100px; }
+        .blob-2 { bottom: -100px; right: -100px; }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            animation: zoomIn 0.5s ease-out;
+            text-align: center;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .auth-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .auth-header h2 span { color: var(--primary-color); }
+        
+        .auth-header p {
+            font-size: 14px;
+            color: var(--secondary-color);
+            opacity: 0.7;
+            margin-bottom: 30px;
+        }
+
+        /* OTP Input Styling */
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .otp-input {
+            width: 45px;
+            height: 55px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 97, 242, 0.2);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 97, 242, 0.4);
+        }
+
+        .timer-badge {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .resend-link {
+            display: block;
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .resend-link:hover:not([disabled]) { color: var(--primary-color); }
+        .resend-link[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-blob blob-1"></div>
+    <div class="background-blob blob-2"></div>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="icon-box">🛡️</div>
+            <h2>OTP <span>Verification</span></h2>
+            <p>Verification code sent to your email. Please enter it below.</p>
+        </div>
+
+        <div class="timer-badge">Expires in: <span id="timer">03:00</span></div>
+
+        <form id="pay-form">
+            <div id="otp" class="otp-container">
+                <input class="otp-input" type="text" name="first" id="first" maxlength="1" required autocomplete="off" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" autofocus>
+                <input class="otp-input" type="text" name="second" id="second" maxlength="1" required autocomplete="off" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                <input class="otp-input" type="text" name="third" id="third" maxlength="1" required autocomplete="off" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                <input class="otp-input" type="text" name="fourth" id="fourth" maxlength="1" required autocomplete="off" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                <input class="otp-input" type="text" name="fifth" id="fifth" maxlength="1" required autocomplete="off" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                <input class="otp-input" type="text" name="sixth" id="sixth" maxlength="1" required autocomplete="off" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">Verify & Proceed</button>
+        </form>
+
+        <a href="javascript:void(0)" class="resend-link" id="resendBtn" disabled>Didn't receive code? <strong>Resend OTP</strong></a>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // OTP Input Focusing logic
+            const inputs = document.querySelectorAll("#otp > input");
+            inputs.forEach((input, index) => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === "Backspace") {
+                        if (input.value === "" && index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                        input.value = "";
+                    } else if (/^[0-9]$/.test(e.key)) {
+                        input.value = e.key;
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Form Submission
+            $("#pay-form").submit(function (e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+                const submitBtn = $("#submitBtn");
+                
+                submitBtn.prop('disabled', true).html('Verifying...');
+
+                $.ajax({
+                    url: "/otpVerify",
+                    type: "POST",
+                    data: formData,
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Verified!',
+                                text: 'Identity confirmed successfully',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = "/home/reset-password";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid OTP',
+                                text: 'The code you entered is incorrect.',
+                                confirmButtonColor: '#0061f2'
+                            });
+                            submitBtn.prop('disabled', false).html('Verify & Proceed');
+                            // Clear inputs and focus first
+                            $('.otp-input').val('');
+                            $('#first').focus();
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong!' });
+                        submitBtn.prop('disabled', false).html('Verify & Proceed');
+                    }
+                });
+            });
+
+            // Timer Logic
+            function startTimer(duration, display) {
+                let timer = duration, minutes, seconds;
+                const interval = setInterval(function () {
+                    minutes = parseInt(timer / 60, 10);
+                    seconds = parseInt(timer % 60, 10);
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+                    display.textContent = minutes + ":" + seconds;
+
+                    if (--timer < 0) {
+                        clearInterval(interval);
+                        $("#resendBtn").removeAttr('disabled').css('opacity', '1');
+                        display.textContent = "00:00";
+                    }
+                }, 1000);
+            }
+
+            const threeMinutes = 60 * 3;
+            startTimer(threeMinutes, document.querySelector('#timer'));
+
+            // Resend Logic placeholder
+            $("#resendBtn").click(function() {
+                if($(this).attr('disabled')) return;
+                // Add your resend OTP ajax call here
+                Swal.fire({ icon: 'info', title: 'OTP Sent', text: 'A new code has been sent to your email.' });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -217,7 +217,7 @@
             background: var(--input-bg);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 14px 16px;
             color: var(--text-color);
             font-size: 14px;
             transition: all 0.3s ease;
@@ -248,12 +248,13 @@
             background: var(--primary-color);
             color: white;
             border: none;
-            padding: 14px 30px;
+            padding: 16px 30px;
             border-radius: 50px;
             font-weight: 700;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(243, 135, 9, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 97, 242, 0.2);
             flex: 1;
             text-align: center;
             display: flex;
@@ -263,18 +264,18 @@
         }
 
         .btn-primary:hover {
-            background: var(--primary-light);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(243, 135, 9, 0.5);
+            box-shadow: 0 6px 20px rgba(0, 97, 242, 0.4);
         }
 
         .btn-outline {
             background: transparent;
             color: var(--secondary-color);
             border: 1px solid var(--glass-border);
-            padding: 14px 30px;
+            padding: 16px 30px;
             border-radius: 50px;
             font-weight: 600;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -283,6 +284,7 @@
             background: #f8fafc;
             border-color: var(--primary-color);
             color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
         /* OTP Input Styling */
@@ -298,10 +300,20 @@
             width: 45px;
             height: 55px;
             text-align: center;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            border-radius: 10px;
-            padding: 0;
+            border-radius: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 4px var(--primary-light);
         }
 
         /* Step Animations */
@@ -363,6 +375,7 @@
             font-weight: 700;
             display: inline-block;
             margin-bottom: 10px;
+            color: white;
         }
     </style>
 </head>
@@ -583,16 +596,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>State</label>
-                        <select name="state" required>
-                            <option value="Gujarat">Gujarat</option>
-                        </select>
+                        <input type="text" name="state" placeholder="Enter State" required>
                     </div>
                     <div class="form-group">
                         <label>City</label>
-                        <select name="city" required>
-                            <option value="Surat">Surat</option>
-                            <option value="Ahmedabad">Ahmedabad</option>
-                        </select>
+                        <input type="text" name="city" placeholder="Enter City" required>
                     </div>
                     <div class="form-group">
                         <label>Pincode</label>
@@ -601,13 +609,9 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group" style="flex: 2;">
+                    <div class="form-group" style="width: 100%;">
                         <label>GST Number</label>
                         <input type="text" name="gst_no" placeholder="GSTIN" required>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Outlet Logo</label>
-                        <input type="file" name="image" style="padding: 10px;">
                     </div>
                 </div>
 
@@ -622,8 +626,19 @@
                 </div>
             </form>
 
-        </div>
-    </div>
+
+            <!-- Navigation Footer -->
+            <div style="margin-top: 40px; text-align: center; font-size: 13px; color: var(--secondary-color); border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                Already have an account? <a href="/home/auth-login" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Sign In</a><br>
+                <div style="margin-top: 10px; font-size: 12px;">
+                    <a href="/home" style="color: var(--secondary-color); text-decoration: none; font-weight: 400; opacity: 0.7;">
+                        Back to Homepage
+                    </a>
+                </div>
+            </div>
+
+        </div> <!-- Closes .form-content -->
+    </div> <!-- Closes .registration-container -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

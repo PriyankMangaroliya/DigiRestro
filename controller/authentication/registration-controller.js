@@ -8,22 +8,35 @@ const razorpayInstance = new Razorpay({
 });
 module.exports = {
   registerUser: async (req, res) => {
-    // sharedData = req.body;
-    // console.log("1");
-
     await checkAlresdyUserExsist(req, res);
-    // console.log("2");
   },
   registerCompany: async (req, res) => {
-    // Store company data in session including logo
-    req.body.company_logo = req.file ? req.file.filename : null;
-    req.session.companyData = req.body;
+    // Explicitly pick fields to prevent session pollution and ensure logo filename is stored
+    const companyData = {
+      company_name: req.body.company_name,
+      legal_name: req.body.legal_name,
+      company_logo: req.file ? req.file.filename : null
+    };
+    req.session.companyData = companyData;
     res.status(200).send({ success: true, message: "Company details stored in session" });
   },
   registerBranch: async (req, res) => {
-    // Store branch data in session including image
-    req.body.image = req.file ? req.file.filename : null;
-    req.session.branchData = req.body;
+    // Explicitly pick branch fields and branch manager account fields
+    // Branch Manager User + Branch Configuration
+    const branchData = {
+      branch_name: req.body.branch_name,
+      name: req.body.name, // Manager Name
+      email_id: req.body.email_id.trim().toLowerCase(),
+      mobile_no: req.body.mobile_no.trim(),
+      password: req.body.password,
+      street_address: req.body.street_address,
+      state: req.body.state,
+      city: req.body.city,
+      pin_code: req.body.pin_code,
+      gst_no: req.body.gst_no,
+      country: "India"
+    };
+    req.session.branchData = branchData;
 
     console.log("Subscription ID for Payment: ", req.session.subscriptionID);
 
@@ -80,7 +93,6 @@ module.exports = {
       const result = await otpVerification(req, res);
       if (result) {
         // OTP matched, just signal success to move to next step
-        Toast.fire({ icon: 'success', title: 'Email verified successfully' });
         res.status(200).send({
           success: true,
           message: "Email verified successfully"
@@ -100,24 +112,22 @@ module.exports = {
     }
   },
   userOtpVerify: async (req, res) => {
-    
+
     const result = await otpVerification(req, res);
-      if (result) {
-        // console.log("Yesssssssssss", enteredOTP);
-        
-        console.log("OTP is matched");
-        
-        res.status(200).send({
-          success: true,
-        });
-        // res.render(`${appPath}/home/auth-reset-password.ejs`);
-      } else {
-        res.status(400).send({
-          success: false,
-          message: "Invalid OTP. Please check and try again."
-        });
-        console.log("OTP is Not matched");
-      }
+    if (result) {
+
+      console.log("OTP is matched");
+
+      res.status(200).send({
+        success: true,
+      });
+    } else {
+      res.status(400).send({
+        success: false,
+        message: "Invalid OTP. Please check and try again."
+      });
+      console.log("OTP is Not matched");
+    }
   },
   registerPurchasedSubscription: async (req, res) => {
     try {
@@ -143,10 +153,33 @@ module.exports = {
       const companyResult = await companyDoc.save();
       const companyID = companyResult._id;
 
-      // 3. Create Branch
-      branchData.user_id = userID;
-      branchData.company_id = companyID;
-      const branchDoc = new branchSchema(branchData);
+      // 3. Create Branch Manager User (Role 'B')
+      const branchSalt = await bcrypt.genSalt(10);
+      const managerUserData = {
+        name: branchData.name,
+        email_id: branchData.email_id,
+        mobile_no: branchData.mobile_no,
+        password: await bcrypt.hash(branchData.password, branchSalt),
+        role_name: "B",
+        is_active: true
+      };
+      const managerUserDoc = new usersSchema(managerUserData);
+      const managerUserResult = await managerUserDoc.save();
+      const managerUserID = managerUserResult._id;
+
+      // 4. Create Branch
+      const branchRecord = {
+        branch_name: branchData.branch_name,
+        street_address: branchData.street_address,
+        state: branchData.state,
+        city: branchData.city,
+        pin_code: branchData.pin_code,
+        gst_no: branchData.gst_no,
+        country: branchData.country || "India",
+        company_id: companyID,
+        user_id: managerUserID
+      };
+      const branchDoc = new branchSchema(branchRecord);
       const branchResult = await branchDoc.save();
       const branchID = branchResult._id;
 
@@ -169,7 +202,7 @@ module.exports = {
 
       // Success!
       console.log("Registration Complete for: ", userData.email_id);
-      
+
       // Cleanup session
       delete req.session.userData;
       delete req.session.companyData;
@@ -186,20 +219,12 @@ module.exports = {
   },
   forgotPasswordOTP: async (req, res) => {
     const result = await usersSchema.find({ email_id: req.body.email_id });
-    // console.log(result);
     if (!(_.isEmpty(result) || _.isUndefined(result) || _.isNull(result))) {
-      // console.log("Not Null");
       const getOTP = await sendMail(req, res);
-      // console.log("4");
       if (!_.isNull(getOTP)) {
-        // console.log("Touy jhbsjdbc: " + getOTP);
-        // req.session.otp = getOTP;
-        // console.log("settttttt:", getOTP);
         await setOTPSession(req, res, getOTP);
         console.log("Session: " + req.session.otp);
 
-        // console.log("Pruthil1111: ", req.body);
-        
         req.session.email = req.body.email_id;
         console.log(req.session.email);
         res.redirect("/home/otp-verify");
@@ -207,7 +232,6 @@ module.exports = {
     } else {
       console.log("User not exist");
     }
-    // await sendMail(req,res);
   },
 };
 
@@ -220,8 +244,8 @@ const otpVerification = function (req, res) {
     req.body.fifth +
     req.body.sixth;
 
-    console.log(enteredOTP);
-    console.log(req.session.otp);
+  console.log(enteredOTP);
+  console.log(req.session.otp);
 
   if (_.isEqual(enteredOTP, req.session.otp)) {
     return true;
@@ -334,18 +358,12 @@ const checkAlresdyUserExsist = async function (req, res) {
   // Lodash is used for check _.isUndefined()
   if (_.isUndefined(data) || _.isEmpty(data) || _.isNull(data)) {
     //Same User not found
-    // console.log("3");
     const getOTP = await sendMail(req, res);
-    // console.log("4");
     if (!_.isNull(getOTP)) {
-      // console.log("Touy jhbsjdbc: " + getOTP);
-      // req.session.otp = getOTP;
-      console.log("settttttt:", getOTP);
       await setOTPSession(req, res, getOTP);
       req.body.image = req.file ? req.file.filename : null; // Store file name in session
       req.session.userData = req.body;
       req.session.subscriptionID = req.body.id; // Correct place to capture plan ID
-      console.log("Pruthil: ", req.body);
       res.status(200).json({ success: true, message: "OTP sent to your email" });
     } else {
       res.status(500).json({ success: false, message: "Failed to send OTP. Please try again." });
