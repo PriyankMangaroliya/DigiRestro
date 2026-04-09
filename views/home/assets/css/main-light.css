@@ -1,0 +1,119 @@
+/* 
+   DigiRestro - Premium Theme for Bootstrap 5
+   Theme only - Layout handled by official Bootstrap 5 CDN
+*/
+
+/* --- 1. CORE VARIABLES & REFINEMENTS --- */
+:root {
+  --primary: #0061f2;
+  --primary-hover: #0050cc;
+  --primary-soft: #eef4ff;
+  --secondary: #69707a;
+  --success: #00ac69;
+  --info: #00cfd5;
+  --warning: #f4a100;
+  --danger: #e81500;
+  --light: #f8fafc;
+  --dark: #0f172a;
+  --white: #ffffff;
+  --body-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap");
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Outfit", sans-serif;
+  color: var(--text-main);
+  background-color: var(--body-bg);
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; transition: var(--transition); }
+
+/* Custom Typography Helpers */
+.letter-spacing-tight { letter-spacing: -1.5px; }
+.transition-all { transition: var(--transition); }
+.hover-translate-y:hover { transform: translateY(-8px); }
+
+/* --- 2. ICON SYSTEM (MAICONS) --- */
+@font-face {
+  font-family: 'maicons';
+  src: url('../fonts/maicons.ttf') format('truetype');
+  font-display: block;
+}
+[class^="mai-"], [class*=" mai-"] {
+  font-family: 'maicons' !important;
+  font-style: normal; font-weight: normal; font-variant: normal;
+  text-transform: none; line-height: 1; -webkit-font-smoothing: antialiased;
+}
+
+.mai-menu:before { content: "\ea4e"; }
+.mai-play:before { content: "\e906"; }
+.mai-chevron-forward:before { content: "\e99e"; }
+.mai-speedometer-outline:before { content: "\e90d"; }
+.mai-pricetag-outline:before { content: "\e971"; }
+.mai-time-outline:before { content: "\e9b5"; }
+.mai-analytics-outline:before { content: "\e90c"; }
+.mai-ribbon:before { content: "\ea7a"; }
+.mai-mail:before { content: "\ea3e"; }
+.mai-phone-portrait:before { content: "\ea5a"; }
+.mai-logo-facebook-f:before { content: "\e9da"; }
+.mai-logo-twitter:before { content: "\ea09"; }
+.mai-logo-instagram:before { content: "\e9e7"; }
+
+/* --- 3. COMPONENT OVERRIDES --- */
+
+/* Navbar Styling */
+.navbar { transition: var(--transition); border-bottom: 1px solid transparent; }
+.navbar.sticky-top.shadow-sm { border-bottom: 1px solid rgba(0,0,0,0.05); }
+.navbar-brand { letter-spacing: -2px; }
+.nav-link { color: var(--text-main) !important; position: relative; padding: 0.5rem 0; }
+.nav-link::after {
+  content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0;
+  background: var(--primary); transition: var(--transition);
+}
+.nav-link.active::after, .nav-link:hover::after { width: 100%; }
+.nav-link.active, .nav-link:hover { color: var(--primary) !important; }
+
+/* Hero Enhancements */
+.home-banner {
+  background: radial-gradient(circle at 100% 0%, var(--primary-soft) 20%, #ffffff 60%);
+}
+.img-hero-container img {
+  filter: drop-shadow(0 35px 60px rgba(0, 97, 242, 0.15));
+  transition: var(--transition);
+}
+.img-hero-container:hover img { transform: translateY(-5px); }
+
+/* Feature Cards */
+.feature-card { border: 1px solid #f1f5f9 !important; transition: var(--transition); }
+.feature-card:hover { border-color: var(--primary-soft) !important; box-shadow: 0 20px 40px -10px rgba(0, 97, 242, 0.08) !important; }
+
+/* Pricing Cards */
+.card.border-primary { border-width: 4px !important; }
+.price-display h1 { letter-spacing: -2px; }
+
+/* --- 4. BACK TO TOP --- */
+.back-to-top {
+  position: fixed; bottom: 40px; right: 40px; width: 60px; height: 60px;
+  background: var(--primary); color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 1050; box-shadow: 0 10px 25px rgba(0, 97, 242, 0.4);
+  transition: var(--transition); visibility: hidden; opacity: 0; font-size: 1.5rem;
+}
+.back-to-top::before { content: "\ea25"; font-family: 'maicons'; }
+.back-to-top:hover { transform: translateY(-5px); background: var(--primary-hover); }
+
+/* --- 5. ANIMATIONS --- */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+.wow { animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
+.zoomIn { animation: zoomIn 1s cubic-bezier(0.4, 0, 0.2, 1) backwards; }

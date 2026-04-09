@@ -15,50 +15,51 @@ module.exports = {
     // console.log("2");
   },
   registerCompany: async (req, res) => {
-    await saveCompany(req, res);
+    // Store company data in session including logo
+    req.body.company_logo = req.file ? req.file.filename : null;
+    req.session.companyData = req.body;
+    res.status(200).send({ success: true, message: "Company details stored in session" });
   },
   registerBranch: async (req, res) => {
-    // console.log("Branch: " , req.body);
-    console.log("USer session:", req.session.userID);
-    console.log("Company session:", req.session.companyID);
-    if (
-      !(
-        _.isUndefined(req.session.companyID) ||
-        _.isUndefined(req.session.userID)
-      )
-    ) {
-      const userTableInstance = {
-        name: req.body.name,
-        email_id: req.body.email_id,
-        mobile_no: req.body.mobile_no,
-        image: req.body.image,
-        password: req.body.password,
-      };
-      userTableInstance.role_name = "B";
-      const branchTableInstance = {
-        branch_name: req.body.branch_name,
-        street_address: req.body.street_address,
-        country: req.body.country,
-        state: req.body.state,
-        city: req.body.city,
-        gst_no: req.body.gst_no,
-        pin_code: req.body.pin_code,
-      };
-      req.body = userTableInstance;
-      console.log("sdsdsssdsd: ", branchTableInstance);
-      const result = await saveUser(req, res);
-      if (result) {
-        console.log("Branch user: ", result);
+    // Store branch data in session including image
+    req.body.image = req.file ? req.file.filename : null;
+    req.session.branchData = req.body;
 
-        req.body = branchTableInstance;
-        req.body.company_id = req.session.companyID;
-        req.body.user_id = req.session.userID;
-        console.log("Branch data: ", req.body);
-        await saveBranch(req, res);
-      }
-    } else {
-      console.log("Filed to register");
+    console.log("Subscription ID for Payment: ", req.session.subscriptionID);
+
+    const subscriptionDetails = await subscriptionSchema.find(
+      { _id: req.session.subscriptionID },
+      { price: 1, plan_name: 1, _id: 0 }
+    );
+
+    if (subscriptionDetails.length === 0) {
+      return res.status(400).send({ success: false, message: "Subscription plan not found." });
     }
+
+    const amount = subscriptionDetails[0].price * 100;
+    const options = {
+      amount: amount,
+      currency: "INR",
+    };
+
+    razorpayInstance.orders.create(options, (err, order) => {
+      if (!err) {
+        res.status(200).send({
+          success: true,
+          msg: "Order Created",
+          order_id: order.id,
+          amount: amount,
+          key_id: process.env.RAZORPAY_ID_KEY,
+          description: subscriptionDetails[0].plan_name,
+          name: req.session.userData.name,
+          email: req.session.userData.email_id,
+          contact: req.session.userData.mobile_no
+        });
+      } else {
+        console.error("Razorpay Error: ", err);
+        res.status(400).send({ success: false, msg: "Failed to initiate payment." });
+      }
+    });
   },
   resendOTP: async (req, res) => {
     console.log("Session userData: ", req.session.userData);
@@ -78,26 +79,24 @@ module.exports = {
     ) {
       const result = await otpVerification(req, res);
       if (result) {
-        // console.log("Yesssssssssss", enteredOTP);
-        console.log("session data :", req.session.otp);
-        console.log("User Session data is: ", req.session.userData);
-        req.body = req.session.userData;
-        const result = await saveUser(req, res);
-        if (result) {
-          req.session.subscriptionID = req.session.userData.id;
-          console.log("subscription ID: ", req.session.subscriptionID);
-
-          res.status(200).send({
-            success: true,
-          });
-        } else {
-          res.status(400).send({
-            success: false,
-          });
-        }
+        // OTP matched, just signal success to move to next step
+        Toast.fire({ icon: 'success', title: 'Email verified successfully' });
+        res.status(200).send({
+          success: true,
+          message: "Email verified successfully"
+        });
       } else {
         console.log("OTP is Not matched");
+        res.status(400).send({
+          success: false,
+          message: "The OTP you entered is incorrect. Please try again."
+        });
       }
+    } else {
+      res.status(400).send({
+        success: false,
+        message: "Session expired. Please restart the registration process."
+      });
     }
   },
   userOtpVerify: async (req, res) => {
@@ -115,113 +114,74 @@ module.exports = {
       } else {
         res.status(400).send({
           success: false,
+          message: "Invalid OTP. Please check and try again."
         });
         console.log("OTP is Not matched");
       }
   },
   registerPurchasedSubscription: async (req, res) => {
-    console.log("registerPurchasedSubscription: ", req.session.subscriptionID);
-    console.log("registerPurchasedSubscription", req.session.branchID);
-    if (
-      !(
-        _.isUndefined(req.session.subscriptionID) ||
-        _.isUndefined(req.session.branchID)
-      )
-    ) {
-      const findSubscriptionData = await subscriptionSchema.find(
-        { _id: req.session.subscriptionID },
-        { duration: 1, price: 1, _id: 0 }
-      );
-      console.log(findSubscriptionData);
+    try {
+      console.log("Final Registration Started");
+      const { userData, companyData, branchData, subscriptionID } = req.session;
+
+      if (!userData || !companyData || !branchData || !subscriptionID) {
+        console.error("Missing session data for final registration");
+        return res.redirect("/home");
+      }
+
+      // 1. Create User
+      const salt = await bcrypt.genSalt(10);
+      userData.password = await bcrypt.hash(userData.password, salt);
+      userData.is_active = true;
+      const userDoc = new usersSchema(userData);
+      const userResult = await userDoc.save();
+      const userID = userResult._id;
+
+      // 2. Create Company
+      companyData.user_id = userID;
+      const companyDoc = new companySchema(companyData);
+      const companyResult = await companyDoc.save();
+      const companyID = companyResult._id;
+
+      // 3. Create Branch
+      branchData.user_id = userID;
+      branchData.company_id = companyID;
+      const branchDoc = new branchSchema(branchData);
+      const branchResult = await branchDoc.save();
+      const branchID = branchResult._id;
+
+      // 4. Create Subscription Record
+      const plan = await subscriptionSchema.findById(subscriptionID);
       const startDate = new Date();
       const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + plan.duration);
 
-      // console.log(endDate.getMonth());
-      // console.log(findSubscriptionData[0].duration);
-      endDate.setMonth(endDate.getMonth() + findSubscriptionData[0].duration);
-      // console.log(endDate);
-
-      // console.log(startDate);
       const purchasedData = {
-        plan_id: req.session.subscriptionID,
-        branch_id: req.session.branchID,
-        duration: findSubscriptionData[0].duration,
-        price: findSubscriptionData[0].price,
+        plan_id: subscriptionID,
+        branch_id: branchID,
+        duration: plan.duration,
+        price: plan.price,
         start_date: startDate,
         end_date: endDate,
       };
-      console.log(purchasedData);
-      const data = new purchaseSubscriptionSchema(purchasedData);
-      const result = await data.save();
-      if (!(_.isUndefined(result) || _.isNull(result) || _.isEmpty(result))) {
-        console.log("User ID:", req.session.userID);
-        console.log("User ID:", req.session.branchID);
-        console.log("User ID:", req.session.subscriptionID);
-        const activeBranchUser = await usersSchema.updateOne(
-          { _id: req.session.userID },
-          { $set: { is_active: true } }
-        );
-        if (
-          activeBranchUser.acknowledged &&
-          activeBranchUser.modifiedCount == 1
-        ) {
-          console.log(activeBranchUser);
-          console.log("branch ID:", req.session.branchID);
-          var getUserId = await branchSchema.aggregate([
-            {
-              $match: {
-                _id: new mongoose.Types.ObjectId(req.session.branchID),
-              },
-            },
-            {
-              $lookup: {
-                from: "company", // Replace with the actual name of your company collection
-                localField: "company_id",
-                foreignField: "_id",
-                as: "company",
-              },
-            },
-            {
-              $unwind: "$company",
-            },
-            {
-              $project: {
-                user_id: "$company.user_id",
-                _id: 0, // Include only the user_id from the company collection
-              },
-            },
-          ]);
+      const subDoc = new purchaseSubscriptionSchema(purchasedData);
+      await subDoc.save();
 
-          if (
-            !(
-              _.isUndefined(getUserId) ||
-              _.isNull(getUserId) ||
-              _.isEmpty(getUserId)
-            )
-          ) {
-            const activeCompanyUser = await usersSchema.updateOne(
-              { _id: getUserId[0].user_id.toString() },
-              { $set: { is_active: true } }
-            );
-            if (
-              activeCompanyUser.acknowledged &&
-              activeCompanyUser.modifiedCount == 1
-            ) {
-              console.log(activeCompanyUser);
-              console.log("You are totally activated");
-              res.redirect("/home/auth-login");
-            } else {
-              console.log(
-                "You Company login is not activated, Branch is activated"
-              );
-            }
-          }
-        }
-      }
-    } else {
-      console.log(
-        "Subscription and branch id is undefined: Now Please register from login page"
-      );
+      // Success!
+      console.log("Registration Complete for: ", userData.email_id);
+      
+      // Cleanup session
+      delete req.session.userData;
+      delete req.session.companyData;
+      delete req.session.branchData;
+      delete req.session.subscriptionID;
+      delete req.session.otp;
+
+      res.redirect("/home/auth-login");
+
+    } catch (error) {
+      console.error("Error in final registration: ", error);
+      res.redirect("/home?error=registration_failed");
     }
   },
   forgotPasswordOTP: async (req, res) => {
@@ -351,7 +311,9 @@ const saveCompany = async function (req, res) {
   if (!(_.isNull(result) || _.isUndefined(result) || _.isEmpty(result))) {
     // console.log("Company result is: " , result._id.toString());
     req.session.companyID = result._id.toString();
-    res.redirect("/home/branch");
+    res.status(200).send({ success: true, message: "Company details saved" });
+  } else {
+    res.status(400).send({ success: false, message: "Could not save company details." });
   }
   // console.log("Company details is: ", req.body);
 };
@@ -380,9 +342,13 @@ const checkAlresdyUserExsist = async function (req, res) {
       // req.session.otp = getOTP;
       console.log("settttttt:", getOTP);
       await setOTPSession(req, res, getOTP);
+      req.body.image = req.file ? req.file.filename : null; // Store file name in session
       req.session.userData = req.body;
+      req.session.subscriptionID = req.body.id; // Correct place to capture plan ID
       console.log("Pruthil: ", req.body);
-      res.redirect("/home/otp");
+      res.status(200).json({ success: true, message: "OTP sent to your email" });
+    } else {
+      res.status(500).json({ success: false, message: "Failed to send OTP. Please try again." });
     }
 
     //save User
@@ -493,7 +459,7 @@ const sameUserFound = async function (req, res, data) {
       globalMessage = "My Dear, User already exist with the same Phone Number";
     }
     await setErrorAlert(req, res, globalMessage);
-    res.redirect("/home/subscription");
+    res.status(409).json({ success: false, message: globalMessage });
   } catch (error) {
     console.log("sameUSerFound: " + error);
   }

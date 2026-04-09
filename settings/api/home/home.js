@@ -8,12 +8,21 @@ module.exports = {
       homeController.homeSubscription(req, res);
     });
 
-    app.get("/home/subscription", (req, res) => {
+    app.get("/home/subscription", async (req, res) => {
       if (!(_.isUndefined(req.query.id) || _.isNull(req.query.id))) {
-        res.render(`${appPath}/home/subscription.ejs`, {
-          session: req.session,
-          id: req.query.id,
-        });
+        try {
+          const decodedId = Buffer.from(req.query.id, 'base64').toString('utf-8');
+          const plan = await subscriptionSchema.findById(decodedId);
+          res.render(`${appPath}/home/registration-wizard.ejs`, {
+            session: req.session,
+            decodedId: decodedId,
+            subscriptionTitle: plan ? plan.plan_name : 'Premium',
+            id: req.query.id
+          });
+        } catch (error) {
+          console.error("Error fetching plan:", error);
+          res.redirect("/home");
+        }
       } else {
         res.redirect("/home");
       }

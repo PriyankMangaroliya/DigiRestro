@@ -8,7 +8,7 @@ module.exports = {
       loginController.loginUser(req, res);
     });
 
-    app.post("/registration", async (req, res, next) => {
+    app.post("/registration", upload.single('image'), async (req, res, next) => {
       // console.log(req.body);
       // console.log("File is: " , req.file);
       registrationController.registerUser(req, res);
@@ -26,11 +26,11 @@ module.exports = {
       registrationController.registerPurchasedSubscription(req,res);
     });
 
-    app.post("/register-company" , (req,res)=>{
+    app.post("/register-company" , upload.single('image'), (req,res)=>{
       registrationController.registerCompany(req,res);
     });
 
-    app.post("/register-branch", async (req,res)=>{
+    app.post("/register-branch", upload.single('image'), async (req,res)=>{
       registrationController.registerBranch(req,res);
     });
 
